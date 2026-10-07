@@ -11,14 +11,14 @@ from pathlib import Path
 from livekit.agents import AgentServer, AutoSubscribe, JobContext, cli
 from livekit.agents.voice import AgentSession
 from livekit.plugins import google
-
-from textile import EventUrgency, elastic, loom
 from weave import (
     WeaveAgent,
     build_textile_toolset,
     compose_system_prompt,
     prewarm_livekit_pipeline,
 )
+
+from textile import EventUrgency, elastic, loom
 
 server = AgentServer()
 
