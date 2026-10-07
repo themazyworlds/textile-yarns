@@ -14,9 +14,8 @@ from typing import Any
 from livekit.agents.llm.mcp import MCPServerStdio, MCPToolset
 from livekit.agents.voice import Agent
 
-from textile import Yarn, YarnManifest
+from textile import Yarn, YarnManifest, loom
 from textile.core.orchestration.instructions import fabric_instructions
-from textile.core.orchestration.loom import loom
 from textile.core.orchestration.stream import stream_engine
 
 logger = logging.getLogger(__name__)
