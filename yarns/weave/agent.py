@@ -4,9 +4,6 @@ Handles AgentServer initialization, RTC session lifecycle, and runtime execution
 """
 
 import asyncio
-import os
-import shutil
-from pathlib import Path
 
 from livekit.agents import AgentServer, AutoSubscribe, JobContext, cli
 from livekit.agents.voice import AgentSession
