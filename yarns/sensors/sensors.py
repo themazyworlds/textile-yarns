@@ -14,7 +14,10 @@ import subprocess
 from pathlib import Path
 from typing import Any
 
-import psutil
+try:
+    import psutil
+except ImportError:
+    psutil = None  # type: ignore
 
 from textile import Yarn, strand
 
