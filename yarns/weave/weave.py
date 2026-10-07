@@ -11,6 +11,13 @@ import sys
 from collections.abc import AsyncGenerator, AsyncIterable
 from typing import Any
 
+# LiveKit compatibility bridge for MCP 2.x
+with contextlib.suppress(Exception):
+    import mcp.client.streamable_http  # noqa: PLC0415
+
+    if not hasattr(mcp.client.streamable_http, "GetSessionIdCallback"):
+        mcp.client.streamable_http.GetSessionIdCallback = Any  # type: ignore
+
 from livekit.agents.llm.mcp import MCPServerStdio, MCPToolset
 from livekit.agents.voice import Agent
 
