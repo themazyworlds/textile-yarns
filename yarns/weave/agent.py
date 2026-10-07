@@ -12,8 +12,7 @@ from livekit.agents import AgentServer, AutoSubscribe, JobContext, cli
 from livekit.agents.voice import AgentSession
 from livekit.plugins import google
 
-from textile.core.orchestration.loom import loom
-from textile.core.telemetry.elastic import EventUrgency, elastic
+from textile import EventUrgency, elastic, loom
 from weave import (
     WeaveAgent,
     build_textile_toolset,

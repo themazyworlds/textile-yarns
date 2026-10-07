@@ -10,8 +10,7 @@ import time
 import uuid
 from typing import Any
 
-from textile import Yarn, strand
-from textile.core.telemetry.elastic import EventUrgency, elastic
+from textile import EventUrgency, Yarn, elastic, strand
 
 logger = logging.getLogger(__name__)
 
