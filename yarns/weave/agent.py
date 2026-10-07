@@ -84,16 +84,31 @@ async def entrypoint(ctx: JobContext):
 
 
 def run_voice_agent(*, dev: bool = False, text: bool = False) -> None:
-    """Run Weave Voice Agent using LiveKit native Python Agents CLI."""
-    import sys  # noqa: PLC0415
+    """Exec into `lk agent console` (or dev). The lk CLI owns audio, credentials, and the terminal UI."""
+    import os  # noqa: PLC0415
+    import shutil  # noqa: PLC0415
+    from pathlib import Path  # noqa: PLC0415
 
-    subcmd = "dev" if dev else "console"
-    args = ["weave_agent", subcmd]
+    lk_bin = shutil.which("lk")
+    if not lk_bin:
+        print(
+            "LiveKit CLI ('lk') not found on PATH.\n"
+            "Install:  curl -sSL https://get.livekit.io/cli | bash && lk cloud auth"
+        )
+        return
+
+    weave_dir = Path(__file__).resolve().parent
+    script_path = str(Path(__file__).resolve())
+
+    # Set working directory to weave folder so lk detects Python agent correctly
+    os.chdir(weave_dir)
+
+    cmd = [lk_bin, "agent", "dev" if dev else "console"]
     if not dev and text:
-        args.append("--text")
+        cmd.append("--text")
+    cmd.append(script_path)
 
-    sys.argv = args
-    cli.run_app(server)
+    os.execvp(lk_bin, cmd)
 
 
 if __name__ == "__main__":
