@@ -15,7 +15,7 @@ try:
 except ImportError:
     pyxclip = None
 
-from textile import Yarn, strand
+from textile import Yarn, sensory_tapestry, strand
 
 
 class Ydotool(Yarn):
@@ -211,8 +211,12 @@ class Ydotool(Yarn):
         term_mode = is_terminal
         if term_mode is None:
             try:
-                active_win = hyprland_ipc.get_active_window()
-                cls_name = str(active_win.get("class", "")).lower()
+                active_win = sensory_tapestry.get_slot("hyprland.active_window") or {}
+                cls_name = (
+                    str(active_win.get("class", ""))
+                    if isinstance(active_win, dict)
+                    else str(active_win)
+                ).lower()
                 term_terms = ("foot", "kitty", "alacritty", "ghostty", "wezterm", "terminal", "xterm", "console")
                 term_mode = any(t in cls_name for t in term_terms)
             except (OSError, ValueError, TypeError, AttributeError, KeyError):
