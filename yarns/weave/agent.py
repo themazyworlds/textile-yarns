@@ -14,7 +14,7 @@ from livekit.plugins import google
 
 from textile.core.orchestration.loom import loom
 from textile.core.telemetry.elastic import EventUrgency, elastic
-from textile.yarns.weave.weave import (
+from weave import (
     WeaveAgent,
     build_textile_toolset,
     compose_system_prompt,
