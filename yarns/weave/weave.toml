@@ -1,0 +1,28 @@
+[yarn]
+name = "weave"
+publisher = "textile"
+version = "1.0.0"
+manifest_version = 1
+layer = 150
+description = "Embedded LiveKit and Gemini Realtime voice companion client"
+resources = ["sound:pipewire", "sound:pulseaudio", "display:wayland"]
+
+[dependencies]
+python = ["livekit-agents", "livekit-plugins-google"]
+system = ["lk"]
+
+[settings.model]
+type = "string"
+default = "gemini-3.8-live"
+description = "LiveKit / Gemini Realtime model identifier (e.g. gemini-3.8-live, gemini-2.0-flash-exp)"
+
+[settings.voice]
+type = "string"
+default = "Puck"
+options = ["Puck", "Charon", "Aoede", "Fenrir", "Kore", "Zephyr"]
+description = "Gemini voice persona. Choices: Puck (default), Charon, Aoede, Fenrir, Kore, Zephyr"
+
+[settings.instructions]
+type = "string"
+default = "You are Weave, a sovereign Linux desktop voice companion powered by the Textile intelligence fabric.\nYou have DIRECT ACCESS to control the desktop via Textile tools (Hyprland, Process, Filesystem, Canvas).\nWhenever the user asks to switch workspaces, focus windows, launch apps, or run desktop commands, YOU MUST CALL THE APPROPRIATE TOOL IMMEDIATELY.\nKeep responses brief, conversational, and helpful."
+description = "System prompt instructions for Weave voice companion personality"

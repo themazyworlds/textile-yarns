@@ -1,0 +1,12 @@
+[yarn]
+name = "clipboard"
+publisher = "textile"
+version = "1.0.0"
+manifest_version = 1
+layer = 50
+description = "Clipboard read and write integration via wl-clipboard and xclip"
+resources = ["display:wayland", "display:x11"]
+
+[dependencies]
+python = ["pyxclip"]
+system = ["wl-clipboard", "xclip"]

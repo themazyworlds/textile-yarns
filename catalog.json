@@ -1,0 +1,150 @@
+{
+  "version": "1.0.0",
+  "updated_at": "2026-10-07",
+  "yarns": {
+    "caelestia": {
+      "name": "caelestia",
+      "version": "1.0.0",
+      "layer": 100,
+      "description": "Caelestia desktop shell IPC, drawer, lock screen, and screenshot controls",
+      "author": "Textile Authors",
+      "dependencies": [],
+      "path": "yarns/caelestia"
+    },
+    "canvas": {
+      "name": "canvas",
+      "version": "1.0.0",
+      "layer": 100,
+      "description": "Quickshell GTK desktop visual presence canvas overlay",
+      "author": "Textile Authors",
+      "dependencies": [],
+      "path": "yarns/canvas"
+    },
+    "clipboard": {
+      "name": "clipboard",
+      "version": "1.0.0",
+      "layer": 50,
+      "description": "Clipboard read and write integration via wl-clipboard and xclip",
+      "author": "Textile Authors",
+      "dependencies": [],
+      "path": "yarns/clipboard"
+    },
+    "dbus_system": {
+      "name": "dbus_system",
+      "version": "1.0.0",
+      "layer": 50,
+      "description": "D-Bus system and session bus inspection and call dispatching",
+      "author": "Textile Authors",
+      "dependencies": [],
+      "path": "yarns/dbus_system"
+    },
+    "filesystem": {
+      "name": "filesystem",
+      "version": "1.0.0",
+      "layer": 10,
+      "description": "Inotify file watching, disk usage, and storage mounts",
+      "author": "Textile Authors",
+      "dependencies": [],
+      "path": "yarns/filesystem"
+    },
+    "hyprland": {
+      "name": "hyprland",
+      "version": "1.0.0",
+      "layer": 100,
+      "description": "Hyprland compositor IPC, workspace navigation, and window controls",
+      "author": "Textile Authors",
+      "dependencies": [],
+      "path": "yarns/hyprland"
+    },
+    "journal": {
+      "name": "journal",
+      "version": "1.0.0",
+      "layer": 50,
+      "description": "Systemd journald logs inspection and query tool",
+      "author": "Textile Authors",
+      "dependencies": [],
+      "path": "yarns/journal"
+    },
+    "packagekit": {
+      "name": "packagekit",
+      "version": "1.0.0",
+      "layer": 10,
+      "description": "Linux PackageKit D-Bus package installation and update query",
+      "author": "Textile Authors",
+      "dependencies": [],
+      "path": "yarns/packagekit"
+    },
+    "process": {
+      "name": "process",
+      "version": "1.0.0",
+      "layer": 10,
+      "description": "Process lifecycle management, list, priority, and signaling",
+      "author": "Textile Authors",
+      "dependencies": [],
+      "path": "yarns/process"
+    },
+    "screen_vision": {
+      "name": "screen_vision",
+      "version": "1.0.0",
+      "layer": 10,
+      "description": "Desktop screenshot capture and screen vision analysis",
+      "author": "Textile Authors",
+      "dependencies": [],
+      "path": "yarns/screen_vision"
+    },
+    "sensors": {
+      "name": "sensors",
+      "version": "1.0.0",
+      "layer": 10,
+      "description": "Hardware sensors, telemetry, and CPU frequency reporting",
+      "author": "Textile Authors",
+      "dependencies": [],
+      "path": "yarns/sensors"
+    },
+    "timer": {
+      "name": "timer",
+      "version": "1.0.0",
+      "layer": 10,
+      "description": "Countdown timers and reminder notifications",
+      "author": "Textile Authors",
+      "dependencies": [],
+      "path": "yarns/timer"
+    },
+    "uwsm": {
+      "name": "uwsm",
+      "version": "1.0.0",
+      "layer": 150,
+      "description": "Systemd and UWSM scope and session management integration",
+      "author": "Textile Authors",
+      "dependencies": [],
+      "path": "yarns/uwsm"
+    },
+    "weave": {
+      "name": "weave",
+      "version": "1.0.0",
+      "layer": 150,
+      "description": "Embedded LiveKit and Gemini Realtime voice companion client",
+      "author": "Textile Authors",
+      "dependencies": [],
+      "path": "yarns/weave"
+    },
+    "web_research": {
+      "name": "web_research",
+      "version": "1.0.0",
+      "layer": 10,
+      "description": "Live internet search and web page text extraction",
+      "author": "Textile Authors",
+      "dependencies": [],
+      "path": "yarns/web_research"
+    },
+    "ydotool": {
+      "name": "ydotool",
+      "version": "1.0.0",
+      "layer": 50,
+      "description": "Synthetic mouse and keyboard input events via ydotool / uinput",
+      "author": "Textile Authors",
+      "dependencies": [],
+      "path": "yarns/ydotool"
+    }
+  }
+}
