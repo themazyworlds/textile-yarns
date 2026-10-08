@@ -3,6 +3,10 @@ agent.py - Main LiveKit Connection Entrypoint & Server Dispatcher.
 Handles AgentServer initialization, RTC session lifecycle, and runtime execution loops.
 """
 
+import os
+import shutil
+from pathlib import Path
+
 from livekit.agents import AgentServer, AutoSubscribe, JobContext, cli
 from livekit.agents.voice import AgentSession
 from livekit.plugins import google
@@ -81,10 +85,6 @@ async def entrypoint(ctx: JobContext):
 
 def run_voice_agent(*, dev: bool = False, text: bool = False) -> None:
     """Exec into `lk agent console` (or dev). The lk CLI owns audio, credentials, and the terminal UI."""
-    import os
-    import shutil
-    from pathlib import Path
-
     lk_bin = shutil.which("lk")
     if not lk_bin:
         print(

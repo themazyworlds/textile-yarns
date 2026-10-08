@@ -3,44 +3,15 @@ Weave Subsystem - Core Domain Logic & Agent Definition.
 Provides WeaveAgent class, streaming transcription node filtering, prompt instructions, and toolset initialization.
 """
 
-import contextlib
-import logging
 import os
 import shutil
 import sys
 from collections.abc import AsyncGenerator, AsyncIterable
-from typing import TYPE_CHECKING, Any
+from typing import Any
 
-# LiveKit compatibility bridge for MCP 2.x
-with contextlib.suppress(Exception):
-    import mcp.client.streamable_http
-
-    session_cb_key = "GetSessionIdCallback"
-    if not hasattr(mcp.client.streamable_http, session_cb_key):
-        setattr(mcp.client.streamable_http, session_cb_key, Any)
-
-if TYPE_CHECKING:
-    from livekit.agents.llm.mcp import MCPServerStdio, MCPToolset
-    from livekit.agents.voice import Agent
-else:
-    try:
-        from livekit.agents.llm.mcp import MCPServerStdio, MCPToolset
-        from livekit.agents.voice import Agent
-    except ImportError:
-        class Agent:
-            pass
-
-        class MCPServerStdio:
-            def __init__(self, *args: Any, **kwargs: Any) -> None:
-                pass
-
-        class MCPToolset:
-            def __init__(self, *args: Any, **kwargs: Any) -> None:
-                pass
-
+from livekit.agents.llm.mcp import MCPServerStdio, MCPToolset
+from livekit.agents.voice import Agent
 from textile import Yarn, fabric_instructions, loom, stream_engine
-
-logger = logging.getLogger(__name__)
 
 
 class WeaveYarn(Yarn):
@@ -98,5 +69,3 @@ def compose_system_prompt(base_instructions: str | None = None) -> str:
         base = getattr(settings, "instructions", "") if settings is not None else ""
     fabric_context = fabric_instructions.build_instructions(loom.active_yarns)
     return f"{base}\n\n{fabric_context}".strip()
-
-
