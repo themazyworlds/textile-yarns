@@ -1,29 +1,31 @@
 # Textile Yarns (Official Capability Catalog)
 
-This repository serves as the official monorepo catalog of first-party **Capability Yarns** for the [Textile](https://github.com/mazy/textile) AI OS & desktop agent framework.
+This repository serves as the official catalog of first-party **Capability Yarns** for the [Textile](https://github.com/mazy/textile) AI OS & desktop agent framework.
+
+Each yarn is a **100% self-contained, isolated capability directory** with its own `pyproject.toml` and dedicated virtual environment.
 
 ---
 
 ## Catalog Index
 
-| Yarn | Layer | Description | Dependencies |
+| Yarn | Layer | Tailor | Description |
 | :--- | :--- | :--- | :--- |
-| **caelestia** | 100 (Compositor/DE) | Caelestia desktop shell IPC, drawer, lock screen, and screenshot controls | System D-Bus |
-| **canvas** | 100 (Compositor/DE) | Quickshell GTK desktop visual presence canvas overlay & emotive animations | Quickshell |
-| **clipboard** | 50 (Middleware) | Clipboard read and write integration via wl-clipboard and xclip | `wl-clipboard`, `xclip` |
-| **dbus_system** | 50 (Middleware) | D-Bus system and session bus inspection and call dispatching | `dbus-fast` |
-| **filesystem** | 10 (Hardware/OS) | File viewing, editing, creation, directory analysis, and search | Standard Library |
-| **hyprland** | 100 (Compositor/DE) | Hyprland compositor IPC, workspace navigation, and window controls | `hyprctl` |
-| **journal** | 50 (Middleware) | Systemd journald logs inspection and query tool | `systemd-journal` |
-| **packagekit** | 10 (Hardware/OS) | Linux PackageKit D-Bus package installation and update query | PackageKit D-Bus |
-| **process** | 10 (Hardware/OS) | Process lifecycle management, list, priority, and signaling | Standard Library |
-| **screen_vision**| 50 (Middleware) | Screen capture, OCR text extraction, and visual element detection | `grim`, `slurp`, `tesseract` |
-| **sensors** | 10 (Hardware/OS) | Hardware sensors, telemetry, and CPU frequency reporting | `psutil` |
-| **timer** | 10 (Hardware/OS) | Countdown timers and reminder notifications | Standard Library |
-| **uwsm** | 150 (Companion) | Systemd and UWSM scope and session management integration | `uwsm` |
-| **weave** | 150 (Companion) | Embedded LiveKit and Gemini Realtime voice companion client | `livekit-agents` |
-| **web_research** | 10 (Hardware/OS) | Live internet search and web page text extraction | `httpx`, `trafilatura` |
-| **ydotool** | 50 (Middleware) | Synthetic mouse and keyboard input events via ydotool / uinput | `ydotool` |
+| **caelestia** | 100 (Compositor/DE) | textile | Caelestia desktop shell IPC, drawer, lock screen, and screenshot controls |
+| **canvas** | 100 (Compositor/DE) | textile | Quickshell GTK desktop visual presence canvas overlay & emotive animations |
+| **clipboard** | 50 (Middleware) | textile | Clipboard read and write integration via wl-clipboard and xclip |
+| **dbus_system** | 50 (Middleware) | textile | D-Bus system and session bus inspection and call dispatching |
+| **filesystem** | 10 (Hardware/OS) | textile | Inotify file watching, disk usage, and storage mounts |
+| **hyprland** | 100 (Compositor/DE) | textile | Hyprland compositor IPC, workspace navigation, and window controls |
+| **journal** | 50 (Middleware) | textile | Systemd journald logs inspection and query tool |
+| **packagekit** | 10 (Hardware/OS) | textile | Linux PackageKit D-Bus package installation and update query |
+| **process** | 10 (Hardware/OS) | textile | Process lifecycle management, list, priority, and signaling |
+| **screen_vision**| 50 (Middleware) | textile | Desktop screenshot capture and screen vision analysis |
+| **sensors** | 10 (Hardware/OS) | textile | Hardware sensors, telemetry, and CPU frequency reporting |
+| **timer** | 10 (Hardware/OS) | textile | Countdown timers and reminder notifications |
+| **uwsm** | 150 (Companion) | textile | Systemd and UWSM scope and session management integration |
+| **weave** | 150 (Companion) | textile | Embedded LiveKit and Gemini Realtime voice companion client |
+| **web_research** | 10 (Hardware/OS) | textile | Live internet search and web page text extraction |
+| **ydotool** | 50 (Middleware) | textile | Synthetic mouse and keyboard input events via ydotool / uinput |
 
 ---
 
@@ -32,11 +34,13 @@ This repository serves as the official monorepo catalog of first-party **Capabil
 Install individual yarns directly using the Textile CLI:
 
 ```bash
-# Install a yarn by path or URL
+# Install a yarn by local path or git URL
 textile yarn install /path/to/textile-yarns/yarns/hyprland
+textile yarn install https://github.com/mazy/textile-yarn-hyprland
 
 # List all discovered and active yarns
 textile yarn list
+textile yarns
 
 # Inspect discovery search paths
 textile yarn paths
@@ -44,35 +48,43 @@ textile yarn paths
 
 ---
 
-## Creating a New Yarn
+## Creating a New Capability Yarn
 
-Each yarn is a standalone directory with a manifest file (`<name>.toml` or `yarn.toml`) and an entry point Python class inheriting from `textile.Yarn`:
+Each yarn is a self-contained directory containing a standard `pyproject.toml` and an entry point Python class inheriting from `textile.Yarn`:
 
+### 1. `pyproject.toml`
 ```toml
-[yarn]
-name = "my_custom_yarn"
+[project]
+name = "textile-yarn-media_control"
 version = "1.0.0"
-manifest_version = 1
-layer = 50
-author = "Your Name"
-description = "Description of the capability"
-entry_point = "my_custom_yarn:MyCustomYarn"
-dependencies = []
+description = "Media player control integration"
+authors = [{ name = "community" }]
+requires-python = ">=3.14"
+dependencies = [
+    "mpris2>=1.0.2",
+]
 
-[capabilities]
-read = true
-write = false
-network = false
+[tool.textile]
+tailor = "community"
+layer = 50                       # 0 (Core), 10 (POSIX), 50 (Protocol), 100 (Compositor), 150 (Session), 1000 (User)
+resources = ["bin:playerctl", "socket:/run/user/1000/bus"]
+
+[tool.textile.settings.default_player]
+default = "spotify"
+type = "str"
+description = "Default media player client"
+choices = ["spotify", "vlc", "firefox", "chromium"]
 ```
 
+### 2. `media_control.py`
 ```python
-from textile import Yarn, Strand, strand
+from textile import Yarn, strand
 
-class MyCustomYarn(Yarn):
-    def is_available(self) -> bool:
-        return True
 
-    @strand(description="Say hello", tier="observe")
-    def say_hello(self, name: str) -> str:
-        return f"Hello, {name}!"
+class MediaControlYarn(Yarn):
+    @strand(description="Play or pause media playback", tier="interact")
+    async def media_play_pause(self, target: str | None = None) -> str:
+        player = target or self.settings.default_player
+        # Implementation...
+        return f"Toggled media play/pause on {player}"
 ```
