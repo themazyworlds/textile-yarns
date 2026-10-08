@@ -47,12 +47,6 @@ class WeaveYarn(Yarn):
     """Weave Voice AI Capability Yarn managing runtime settings and LiveKit integration."""
 
 
-
-def get_weave_settings() -> Any:
-    """Retrieve validated Weave settings from active Skein/Loom instance or defaults."""
-    return loom.get_settings("weave")
-
-
 class WeaveAgent(Agent):
     """Voice companion agent with real-time streaming semantic token interception via Loom Wefts."""
 
