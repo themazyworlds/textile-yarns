@@ -2,11 +2,11 @@
 name = "textile-yarn-ydotool"
 version = "1.0.0"
 description = "Synthetic mouse and keyboard input events via ydotool / uinput"
-authors = [{ name = "textile" }]
 dependencies = [
     "pyxclip>=1.0.0",
 ]
 
 [tool.textile]
+tailor = "textile"
 layer = 50
 resources = ["socket:/tmp/.ydotool_socket", "socket:$XDG_RUNTIME_DIR/ydotool_socket"]

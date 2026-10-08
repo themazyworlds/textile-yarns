@@ -2,11 +2,11 @@
 name = "textile-yarn-packagekit"
 version = "1.0.0"
 description = "Linux PackageKit D-Bus package installation and update query"
-authors = [{ name = "textile" }]
 dependencies = [
     "dbus-fast>=2.20.0",
 ]
 
 [tool.textile]
+tailor = "textile"
 layer = 10
 resources = ["dbus:system"]

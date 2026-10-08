@@ -2,9 +2,9 @@
 name = "textile-yarn-journal"
 version = "1.0.0"
 description = "Systemd journald logs inspection and query tool"
-authors = [{ name = "textile" }]
 dependencies = []
 
 [tool.textile]
+tailor = "textile"
 layer = 50
 resources = []

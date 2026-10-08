@@ -2,11 +2,11 @@
 name = "textile-yarn-clipboard"
 version = "1.0.0"
 description = "Clipboard read and write integration via wl-clipboard and xclip"
-authors = [{ name = "textile" }]
 dependencies = [
     "pyxclip",
 ]
 
 [tool.textile]
+tailor = "textile"
 layer = 50
 resources = ["display:wayland", "display:x11"]

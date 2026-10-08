@@ -2,12 +2,12 @@
 name = "textile-yarn-weave"
 version = "1.0.0"
 description = "Embedded LiveKit and Gemini Realtime voice companion client"
-authors = [{ name = "textile" }]
 dependencies = [
     "livekit-agents[google]>=1.8.2",
 ]
 
 [tool.textile]
+tailor = "textile"
 layer = 150
 resources = ["sound:pipewire", "sound:pulseaudio", "display:wayland"]
 

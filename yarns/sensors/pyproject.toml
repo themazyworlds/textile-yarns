@@ -2,11 +2,11 @@
 name = "textile-yarn-sensors"
 version = "1.0.0"
 description = "Hardware sensors, telemetry, and CPU frequency reporting"
-authors = [{ name = "textile" }]
 dependencies = [
     "psutil",
 ]
 
 [tool.textile]
+tailor = "textile"
 layer = 10
 resources = []
