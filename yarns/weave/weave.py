@@ -19,8 +19,14 @@ with contextlib.suppress(Exception):
     if not hasattr(mcp.client.streamable_http, session_cb_key):
         setattr(mcp.client.streamable_http, session_cb_key, Any)
 
-from livekit.agents.llm.mcp import MCPServerStdio, MCPToolset
-from livekit.agents.voice import Agent
+try:
+    from livekit.agents.llm.mcp import MCPServerStdio, MCPToolset
+    from livekit.agents.voice import Agent
+except ImportError:
+    MCPServerStdio = Any
+    MCPToolset = Any
+    Agent = object
+
 from textile import Yarn, fabric_instructions, loom, stream_engine
 
 logger = logging.getLogger(__name__)
