@@ -30,7 +30,7 @@ class HyprlandIPC:
         if sig:
             candidates = [
                 f"{self._runtime_dir}/hypr/{sig}/.socket.sock",
-                f"/tmp/hypr/{sig}/.socket.sock",  # noqa: S108
+                f"/tmp/hypr/{sig}/.socket.sock",
             ]
             for c in candidates:
                 if os.path.exists(c):
@@ -42,7 +42,7 @@ class HyprlandIPC:
         if sig:
             candidates = [
                 f"{self._runtime_dir}/hypr/{sig}/.socket2.sock",
-                f"/tmp/hypr/{sig}/.socket2.sock",  # noqa: S108
+                f"/tmp/hypr/{sig}/.socket2.sock",
             ]
             for c in candidates:
                 if os.path.exists(c):
@@ -653,6 +653,14 @@ hyprland_ipc = HyprlandIPC()
 
 
 class Hyprland(Yarn):
+    name = "hyprland"
+    layer = 100
+    description = "Hyprland compositor IPC, workspace navigation, and window controls"
+    publisher = "textile"
+    version = "1.0.0"
+    resources = ('socket:$XDG_RUNTIME_DIR/hypr', 'env:HYPRLAND_INSTANCE_SIGNATURE', 'env:XDG_RUNTIME_DIR')
+
+
     def is_available(self) -> bool:
         sig = os.environ.get("HYPRLAND_INSTANCE_SIGNATURE", "")
         if sig:

@@ -1,0 +1,5 @@
+[project]
+name = "textile-yarn-caelestia"
+version = "1.0.0"
+description = "Caelestia desktop shell IPC, drawer, lock screen, and screenshot controls"
+dependencies = []

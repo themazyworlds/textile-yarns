@@ -1,0 +1,5 @@
+[project]
+name = "textile-yarn-timer"
+version = "1.0.0"
+description = "Countdown timers and reminder notifications"
+dependencies = []

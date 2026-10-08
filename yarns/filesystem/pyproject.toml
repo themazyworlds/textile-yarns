@@ -1,0 +1,5 @@
+[project]
+name = "textile-yarn-filesystem"
+version = "1.0.0"
+description = "Inotify file watching, disk usage, and storage mounts"
+dependencies = []

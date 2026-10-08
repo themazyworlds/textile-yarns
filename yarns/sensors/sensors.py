@@ -12,12 +12,9 @@ import os
 import shutil
 import subprocess
 from pathlib import Path
-from typing import Any
-
-try:
+psutil: Any = None
+with contextlib.suppress(ImportError):
     import psutil
-except ImportError:
-    psutil = None  # type: ignore
 
 from textile import Yarn, strand
 
@@ -66,6 +63,8 @@ class SensorsAPI:
         return None
 
     def _get_psutil_sensor_data(self) -> dict[str, Any] | None:
+        if psutil is None:
+            return None
         with contextlib.suppress(Exception):
             p_data: dict[str, Any] = {"cpu": {}, "gpu": {}, "fans": {}, "battery": {}, "other": {}}
             temps = psutil.sensors_temperatures()
@@ -117,7 +116,7 @@ class SensorsAPI:
         chip_name: str,
         feature: str,
         sub_key: str,
-        sub_val: int | float,
+        sub_val: float,
         result: dict[str, Any],
     ) -> float:
         feat_lower = feature.lower()
@@ -199,7 +198,7 @@ class SensorsAPI:
                         gov = gov_file.read_text().strip() if gov_file.exists() else "unknown"
                         freqs.append({"core": c_dir.name, "freq": f"{freq_mhz} MHz", "governor": gov})
 
-        if not freqs:
+        if not freqs and psutil is not None:
             with contextlib.suppress(Exception):
                 p_freqs = psutil.cpu_freq(percpu=True)
                 if p_freqs:
@@ -219,6 +218,14 @@ sensors_api = SensorsAPI()
 
 
 class Sensors(Yarn):
+    name = "sensors"
+    layer = 10
+    description = "Hardware sensors, telemetry, and CPU frequency reporting"
+    publisher = "textile"
+    version = "1.0.0"
+    resources = ()
+
+
     def is_available(self) -> bool:
         return sensors_api.is_available()
 

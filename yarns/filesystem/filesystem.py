@@ -551,6 +551,14 @@ file_io = FileIO()
 
 
 class FilesystemStorage(Yarn):
+    name = "filesystem"
+    layer = 10
+    description = "Inotify file watching, disk usage, and storage mounts"
+    publisher = "textile"
+    version = "1.0.0"
+    resources = ()
+
+
     def is_available(self) -> bool:
         return True
 

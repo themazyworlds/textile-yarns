@@ -1,0 +1,5 @@
+[project]
+name = "textile-yarn-canvas"
+version = "1.0.0"
+description = "Quickshell GTK desktop visual presence canvas overlay"
+dependencies = []

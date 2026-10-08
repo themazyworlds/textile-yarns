@@ -52,7 +52,7 @@ def parse_package_id(package_id: str) -> dict[str, str]:
 def unwrap_variant(val: Any) -> Any:
     """Recursively unwrap dbus_fast Variant values to native Python types."""
     if hasattr(val, "value") and type(val).__name__ == "Variant":
-        return unwrap_variant(getattr(val, "value"))
+        return unwrap_variant(val.value)
     elif isinstance(val, dict):
         return {str(k): unwrap_variant(v) for k, v in val.items()}
     elif isinstance(val, (list, tuple)):
@@ -599,6 +599,14 @@ packagekit_ctl = PackageKitController()
 
 
 class PackageKit(Yarn):
+    name = "packagekit"
+    layer = 10
+    description = "Linux PackageKit D-Bus package installation and update query"
+    publisher = "textile"
+    version = "1.0.0"
+    resources = ('dbus:system',)
+
+
     """Universal Linux Package Management Capability Yarn via PackageKit D-Bus IPC."""
 
     def is_available(self) -> bool:

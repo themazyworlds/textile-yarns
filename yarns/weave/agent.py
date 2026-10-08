@@ -8,14 +8,13 @@ import asyncio
 from livekit.agents import AgentServer, AutoSubscribe, JobContext, cli
 from livekit.agents.voice import AgentSession
 from livekit.plugins import google
+from textile import EventUrgency, elastic, loom
 from weave import (
     WeaveAgent,
     build_textile_toolset,
     compose_system_prompt,
     prewarm_livekit_pipeline,
 )
-
-from textile import EventUrgency, elastic, loom
 
 server = AgentServer()
 
@@ -85,9 +84,9 @@ async def entrypoint(ctx: JobContext):
 
 def run_voice_agent(*, dev: bool = False, text: bool = False) -> None:
     """Exec into `lk agent console` (or dev). The lk CLI owns audio, credentials, and the terminal UI."""
-    import os  # noqa: PLC0415
-    import shutil  # noqa: PLC0415
-    from pathlib import Path  # noqa: PLC0415
+    import os
+    import shutil
+    from pathlib import Path
 
     lk_bin = shutil.which("lk")
     if not lk_bin:

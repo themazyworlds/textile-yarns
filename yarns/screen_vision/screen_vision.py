@@ -72,6 +72,14 @@ vision_engine = ScreenVisionEngine()
 
 
 class ScreenVision(Yarn):
+    name = "screen_vision"
+    layer = 10
+    description = "Desktop screenshot capture and screen vision analysis"
+    publisher = "textile"
+    version = "1.0.0"
+    resources = ('display:wayland', 'display:x11')
+
+
     def is_available(self) -> bool:
         return True
 

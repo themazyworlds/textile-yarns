@@ -67,7 +67,7 @@ def _parse_entry(obj: dict[str, Any], is_kernel: bool = False) -> dict[str, Any]
     ts_str = ""
     if ts_us:
         try:
-            ts_str = datetime.datetime.fromtimestamp(ts_us / 1_000_000).strftime("%Y-%m-%d %H:%M:%S")
+            ts_str = datetime.datetime.fromtimestamp(ts_us / 1_000_000, tz=datetime.UTC).strftime("%Y-%m-%d %H:%M:%S")
         except (ValueError, TypeError, OverflowError, OSError):
             ts_str = str(ts_us)
 
@@ -212,6 +212,14 @@ journal_api = JournalAPI()
 
 
 class Journal(Yarn):
+    name = "journal"
+    layer = 50
+    description = "Systemd journald logs inspection and query tool"
+    publisher = "textile"
+    version = "1.0.0"
+    resources = ()
+
+
     def is_available(self) -> bool:
         return journal_api.is_available()
 

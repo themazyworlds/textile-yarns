@@ -73,6 +73,14 @@ caelestia_ipc = CaelestiaIPC()
 
 
 class Caelestia(Yarn):
+    name = "caelestia"
+    layer = 100
+    description = "Caelestia desktop shell IPC, drawer, lock screen, and screenshot controls"
+    publisher = "textile"
+    version = "1.0.0"
+    resources = ('display:wayland', 'display:x11', 'dbus:session')
+
+
     def is_available(self) -> bool:
         return bool(shutil.which("caelestia") or shutil.which("qs"))
 

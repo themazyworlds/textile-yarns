@@ -20,6 +20,14 @@ MAX_PROC_SCAN_LIMIT = 50
 
 
 class ProcessControl(Yarn):
+    name = "process"
+    layer = 10
+    description = "Process lifecycle management, list, priority, and signaling"
+    publisher = "textile"
+    version = "1.0.0"
+    resources = ()
+
+
     def is_available(self) -> bool:
         return True
 

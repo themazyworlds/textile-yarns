@@ -1,0 +1,5 @@
+[project]
+name = "textile-yarn-sensors"
+version = "1.0.0"
+description = "Hardware sensors, telemetry, and CPU frequency reporting"
+dependencies = ["psutil"]

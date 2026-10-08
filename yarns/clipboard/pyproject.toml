@@ -1,0 +1,5 @@
+[project]
+name = "textile-yarn-clipboard"
+version = "1.0.0"
+description = "Clipboard read and write integration via wl-clipboard and xclip"
+dependencies = ["pyxclip"]

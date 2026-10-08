@@ -1,0 +1,5 @@
+[project]
+name = "textile-yarn-hyprland"
+version = "1.0.0"
+description = "Hyprland compositor IPC, workspace navigation, and window controls"
+dependencies = []

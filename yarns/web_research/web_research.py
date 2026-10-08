@@ -32,7 +32,7 @@ def _search_ddg_lite(query: str, max_results: int = 8) -> list[tuple[str, str, s
             "Content-Type": "application/x-www-form-urlencoded",
         },
     )
-    with urllib.request.urlopen(req, timeout=6) as resp:  # noqa: S310
+    with urllib.request.urlopen(req, timeout=6) as resp:
         content = resp.read().decode("utf-8", errors="replace")
 
     pattern = re.compile(
@@ -66,7 +66,7 @@ def search_web(query: str) -> str:
     with contextlib.suppress(urllib.error.URLError, OSError, ValueError, json.JSONDecodeError):
         ddg_url = f"https://api.duckduckgo.com/?q={urllib.parse.quote(clean_query)}&format=json&no_html=1&skip_disambig=1"
         req = urllib.request.Request(ddg_url, headers={"User-Agent": "TextileAgent/1.0 (Universal Linux Desktop)"})
-        with urllib.request.urlopen(req, timeout=4) as resp:  # noqa: S310
+        with urllib.request.urlopen(req, timeout=4) as resp:
             data = json.loads(resp.read().decode("utf-8", errors="replace"))
             abstract = data.get("AbstractText", "")
             heading = data.get("Heading", "")
@@ -82,7 +82,7 @@ def search_web(query: str) -> str:
     with contextlib.suppress(urllib.error.URLError, OSError, ValueError, json.JSONDecodeError):
         wiki_url = f"https://en.wikipedia.org/w/api.php?action=query&list=search&srsearch={urllib.parse.quote(query)}&utf8=&format=json&srlimit=5"
         req = urllib.request.Request(wiki_url, headers={"User-Agent": "TextileAgent/1.0 (Universal Linux Desktop)"})
-        with urllib.request.urlopen(req, timeout=4) as resp:  # noqa: S310
+        with urllib.request.urlopen(req, timeout=4) as resp:
             data = json.loads(resp.read().decode("utf-8", errors="replace"))
             search_items = data.get("query", {}).get("search", [])
             for item in search_items:
@@ -117,11 +117,11 @@ def fetch_webpage(url: str) -> str:
         url_clean = "https://" + url_clean
 
     try:
-        req = urllib.request.Request(  # noqa: S310
+        req = urllib.request.Request(
             url_clean,
             headers={"User-Agent": "Mozilla/5.0 (X11; Linux x86_64; rv:128.0) Gecko/20100101 Firefox/128.0"},
         )
-        with urllib.request.urlopen(req, timeout=12) as response:  # noqa: S310
+        with urllib.request.urlopen(req, timeout=12) as response:
             response.headers.get("Content-Type", "")
             raw_data = response.read()
 
@@ -147,6 +147,14 @@ def fetch_webpage(url: str) -> str:
 
 
 class WebResearch(Yarn):
+    name = "web_research"
+    layer = 10
+    description = "Live internet search and web page text extraction"
+    publisher = "textile"
+    version = "1.0.0"
+    resources = ()
+
+
     def is_available(self) -> bool:
         return True
 

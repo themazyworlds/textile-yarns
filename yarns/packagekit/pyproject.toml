@@ -1,0 +1,5 @@
+[project]
+name = "textile-yarn-packagekit"
+version = "1.0.0"
+description = "Linux PackageKit D-Bus package installation and update query"
+dependencies = []

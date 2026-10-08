@@ -1,0 +1,5 @@
+[project]
+name = "textile-yarn-web_research"
+version = "1.0.0"
+description = "Live internet search and web page text extraction"
+dependencies = []

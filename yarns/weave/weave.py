@@ -13,15 +13,14 @@ from typing import Any
 
 # LiveKit compatibility bridge for MCP 2.x
 with contextlib.suppress(Exception):
-    import mcp.client.streamable_http  # noqa: PLC0415
+    import mcp.client.streamable_http
 
     if not hasattr(mcp.client.streamable_http, "GetSessionIdCallback"):
-        mcp.client.streamable_http.GetSessionIdCallback = Any  # type: ignore
+        setattr(mcp.client.streamable_http, "GetSessionIdCallback", Any)
 
 from livekit.agents.llm.mcp import MCPServerStdio, MCPToolset
 from livekit.agents.voice import Agent
-
-from textile import Yarn, YarnManifest, fabric_instructions, loom, stream_engine
+from textile import Yarn, fabric_instructions, loom, stream_engine
 
 logger = logging.getLogger(__name__)
 
@@ -29,8 +28,12 @@ logger = logging.getLogger(__name__)
 class WeaveYarn(Yarn):
     """Weave Voice AI Capability Yarn managing runtime settings and LiveKit integration."""
 
-    def __init__(self, manifest: YarnManifest | None = None) -> None:
-        super().__init__(manifest=manifest)
+    name = "weave"
+    layer = 150
+    description = "Embedded LiveKit and Gemini Realtime voice companion client"
+    publisher = "textile"
+    version = "1.0.0"
+    resources = ("sound:pipewire", "sound:pulseaudio", "display:wayland")
 
 
 def get_weave_settings() -> Any:
@@ -42,11 +45,11 @@ def prewarm_livekit_pipeline() -> None:
     """Pre-warm Fabric Loom, Pydantic schemas, NumPy FFT, and LiveKit hyphenator Tries off the asyncio loop."""
     loom.initialize()
     with contextlib.suppress(Exception):
-        import numpy as np  # noqa: PLC0415
+        import numpy as np
 
         np.fft.rfft([0.0])
     with contextlib.suppress(Exception):
-        from livekit.agents.tokenize import _basic_hyphenator  # noqa: PLC0415
+        from livekit.agents.tokenize import _basic_hyphenator
 
         _basic_hyphenator._get_hyphenator()
 
@@ -57,17 +60,20 @@ class WeaveAgent(Agent):
     async def transcription_node(
         self,
         text: AsyncIterable[str | Any],
-        model_settings: Any,  # noqa: ARG002
+        model_settings: Any,
     ) -> AsyncGenerator[str | Any]:
         async for delta in text:
             delta_text = getattr(delta, "text", None) or (delta if isinstance(delta, str) else str(delta))
             clean_delta = stream_engine.process_stream(delta_text, loom.wefts)
             if clean_delta:
-                if hasattr(delta, "text"):
-                    setattr(delta, "text", clean_delta)
-                    yield delta
-                else:
+                if isinstance(delta, str):
                     yield clean_delta
+                else:
+                    try:
+                        delta.text = clean_delta
+                        yield delta
+                    except (AttributeError, TypeError):
+                        yield clean_delta
 
 
 def build_textile_toolset() -> MCPToolset:
