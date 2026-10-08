@@ -12,6 +12,6 @@ layer = 150
 resources = ["sound:pipewire", "sound:pulseaudio", "display:wayland"]
 
 [tool.textile.settings]
-model = "gemini-2.5-flash-native-audio-preview-12-2025"
+model = "gemini-3.8-live"
 voice = "Puck"
 instructions = "You are Textile Weave, an ultra-fast, friendly, intelligent voice companion embedded into Linux desktop."
