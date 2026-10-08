@@ -53,19 +53,6 @@ def get_weave_settings() -> Any:
     return loom.get_settings("weave")
 
 
-def prewarm_livekit_pipeline() -> None:
-    """Pre-warm Fabric Loom, Pydantic schemas, NumPy FFT, and LiveKit hyphenator Tries off the asyncio loop."""
-    loom.initialize()
-    with contextlib.suppress(Exception):
-        import numpy as np
-
-        np.fft.rfft([0.0])
-    with contextlib.suppress(Exception):
-        from livekit.agents.tokenize import _basic_hyphenator
-
-        _basic_hyphenator._get_hyphenator()
-
-
 class WeaveAgent(Agent):
     """Voice companion agent with real-time streaming semantic token interception via Loom Wefts."""
 
