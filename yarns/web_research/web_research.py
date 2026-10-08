@@ -147,12 +147,6 @@ def fetch_webpage(url: str) -> str:
 
 
 class WebResearch(Yarn):
-    name = "web_research"
-    layer = 10
-    description = "Live internet search and web page text extraction"
-    publisher = "textile"
-    version = "1.0.0"
-    resources = ()
 
 
     def is_available(self) -> bool:

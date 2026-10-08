@@ -2,4 +2,11 @@
 name = "textile-yarn-dbus_system"
 version = "1.0.0"
 description = "D-Bus system and session bus inspection and call dispatching"
-dependencies = ["dbus_fast"]
+authors = [{ name = "textile" }]
+dependencies = [
+    "dbus_fast",
+]
+
+[tool.textile]
+layer = 50
+resources = ["dbus:session", "dbus:system"]

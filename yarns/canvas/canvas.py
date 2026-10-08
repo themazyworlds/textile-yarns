@@ -147,12 +147,6 @@ canvas_ctl = CanvasController()
 
 
 class Canvas(Yarn):
-    name = "canvas"
-    layer = 100
-    description = "Quickshell GTK desktop visual presence canvas overlay"
-    publisher = "textile"
-    version = "1.0.0"
-    resources = ('display:wayland', 'display:x11', 'dbus:session')
 
 
     """Quickshell Emotive Canvas & Mood System Yarn."""

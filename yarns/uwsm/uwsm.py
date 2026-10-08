@@ -23,12 +23,6 @@ def _get_bin(name: str) -> str:
 
 
 class UWSM(Yarn):
-    name = "uwsm"
-    layer = 150
-    description = "Systemd and UWSM scope and session management integration"
-    publisher = "textile"
-    version = "1.0.0"
-    resources = ('dbus:session', 'env:XDG_RUNTIME_DIR')
 
 
     def is_available(self) -> bool:

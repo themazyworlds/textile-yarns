@@ -19,12 +19,6 @@ logger = logging.getLogger(__name__)
 
 
 class Clipboard(Yarn):
-    name = "clipboard"
-    layer = 50
-    description = "Clipboard read and write integration via wl-clipboard and xclip"
-    publisher = "textile"
-    version = "1.0.0"
-    resources = ('display:wayland', 'display:x11')
 
 
     """Universal System Clipboard Capability Yarn via Native pyxclip."""

@@ -21,12 +21,6 @@ from textile import Yarn, sensory_tapestry, strand
 
 
 class Ydotool(Yarn):
-    name = "ydotool"
-    layer = 50
-    description = "Synthetic mouse and keyboard input events via ydotool / uinput"
-    publisher = "textile"
-    version = "1.0.0"
-    resources = ("socket:/tmp/.ydotool_socket", "socket:$XDG_RUNTIME_DIR/ydotool_socket")
 
     KEY_MAP: ClassVar[dict[str, int]] = {
         "return": 28,

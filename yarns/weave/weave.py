@@ -15,8 +15,9 @@ from typing import Any
 with contextlib.suppress(Exception):
     import mcp.client.streamable_http
 
-    if not hasattr(mcp.client.streamable_http, "GetSessionIdCallback"):
-        setattr(mcp.client.streamable_http, "GetSessionIdCallback", Any)
+    session_cb_key = "GetSessionIdCallback"
+    if not hasattr(mcp.client.streamable_http, session_cb_key):
+        setattr(mcp.client.streamable_http, session_cb_key, Any)
 
 from livekit.agents.llm.mcp import MCPServerStdio, MCPToolset
 from livekit.agents.voice import Agent
@@ -28,12 +29,6 @@ logger = logging.getLogger(__name__)
 class WeaveYarn(Yarn):
     """Weave Voice AI Capability Yarn managing runtime settings and LiveKit integration."""
 
-    name = "weave"
-    layer = 150
-    description = "Embedded LiveKit and Gemini Realtime voice companion client"
-    publisher = "textile"
-    version = "1.0.0"
-    resources = ("sound:pipewire", "sound:pulseaudio", "display:wayland")
 
 
 def get_weave_settings() -> Any:

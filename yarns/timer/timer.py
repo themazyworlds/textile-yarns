@@ -63,12 +63,6 @@ async def _timer_worker(timer_id: str, label: str, duration_seconds: float, end_
 
 
 class Timer(Yarn):
-    name = "timer"
-    layer = 10
-    description = "Countdown timers and reminder notifications"
-    publisher = "textile"
-    version = "1.0.0"
-    resources = ()
 
 
     """Countdown Timer and Reminder Alerts Yarn."""

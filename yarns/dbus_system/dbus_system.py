@@ -247,12 +247,6 @@ dbus_api = DBusAPI()
 
 
 class DBus(Yarn):
-    name = "dbus_system"
-    layer = 50
-    description = "D-Bus system and session bus inspection and call dispatching"
-    publisher = "textile"
-    version = "1.0.0"
-    resources = ('dbus:session', 'dbus:system')
 
 
     def is_available(self) -> bool:

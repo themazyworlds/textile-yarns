@@ -265,10 +265,9 @@ class InotifyAPI:
             data_len = len(raw_data)
             while offset + 16 <= data_len and len(events) < max_events:
                 wd, mask, cookie, name_len = struct.unpack_from("iIII", raw_data, offset)
-                offset += 16
                 name = ""
                 if name_len > 0 and offset + name_len <= data_len:
-                    name = raw_data[offset : offset + name_len].decode("utf-8", errors="replace").rstrip("\x00")
+                    name = raw_data[offset : offset + name_len].decode("utf-8", errors="ignore").rstrip("\x00")
                     offset += name_len
 
                 event_flags = [flag_name for bit, flag_name in EVENT_NAME_MAP.items() if mask & bit]
@@ -551,12 +550,6 @@ file_io = FileIO()
 
 
 class FilesystemStorage(Yarn):
-    name = "filesystem"
-    layer = 10
-    description = "Inotify file watching, disk usage, and storage mounts"
-    publisher = "textile"
-    version = "1.0.0"
-    resources = ()
 
 
     def is_available(self) -> bool:

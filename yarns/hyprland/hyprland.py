@@ -653,12 +653,6 @@ hyprland_ipc = HyprlandIPC()
 
 
 class Hyprland(Yarn):
-    name = "hyprland"
-    layer = 100
-    description = "Hyprland compositor IPC, workspace navigation, and window controls"
-    publisher = "textile"
-    version = "1.0.0"
-    resources = ('socket:$XDG_RUNTIME_DIR/hypr', 'env:HYPRLAND_INSTANCE_SIGNATURE', 'env:XDG_RUNTIME_DIR')
 
 
     def is_available(self) -> bool:

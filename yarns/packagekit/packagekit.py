@@ -599,12 +599,6 @@ packagekit_ctl = PackageKitController()
 
 
 class PackageKit(Yarn):
-    name = "packagekit"
-    layer = 10
-    description = "Linux PackageKit D-Bus package installation and update query"
-    publisher = "textile"
-    version = "1.0.0"
-    resources = ('dbus:system',)
 
 
     """Universal Linux Package Management Capability Yarn via PackageKit D-Bus IPC."""

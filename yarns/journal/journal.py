@@ -212,12 +212,6 @@ journal_api = JournalAPI()
 
 
 class Journal(Yarn):
-    name = "journal"
-    layer = 50
-    description = "Systemd journald logs inspection and query tool"
-    publisher = "textile"
-    version = "1.0.0"
-    resources = ()
 
 
     def is_available(self) -> bool:

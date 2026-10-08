@@ -2,4 +2,12 @@
 name = "textile-yarn-screen_vision"
 version = "1.0.0"
 description = "Desktop screenshot capture and screen vision analysis"
-dependencies = ["Pillow", "mss"]
+authors = [{ name = "textile" }]
+dependencies = [
+    "Pillow",
+    "mss",
+]
+
+[tool.textile]
+layer = 10
+resources = ["display:wayland", "display:x11"]

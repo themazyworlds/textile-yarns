@@ -12,6 +12,8 @@ import os
 import shutil
 import subprocess
 from pathlib import Path
+from typing import Any
+
 psutil: Any = None
 with contextlib.suppress(ImportError):
     import psutil
@@ -168,21 +170,21 @@ class SensorsAPI:
         data: dict[str, Any] = {"temperatures": {}, "fans": {}}
         for hw_dir in hwmon_path.glob("hwmon*"):
             name_file = hw_dir / "name"
-            name = name_file.read_text().strip() if name_file.exists() else hw_dir.name
+            hw_name = name_file.read_text().strip() if name_file.exists() else hw_dir.name
 
             for temp_input in hw_dir.glob("temp*_input"):
                 with contextlib.suppress(OSError, ValueError, TypeError):
                     temp_c = round(int(temp_input.read_text().strip()) / 1000.0, 1)
                     label_file = hw_dir / temp_input.name.replace("_input", "_label")
                     label = label_file.read_text().strip() if label_file.exists() else temp_input.stem
-                    data["temperatures"][f"{name} {label}"] = f"{temp_c}°C"
+                    data["temperatures"][f"{hw_name} {label}"] = f"{temp_c}°C"
 
             for fan_input in hw_dir.glob("fan*_input"):
                 with contextlib.suppress(OSError, ValueError, TypeError):
                     rpm = int(fan_input.read_text().strip())
                     label_file = hw_dir / fan_input.name.replace("_input", "_label")
                     label = label_file.read_text().strip() if label_file.exists() else fan_input.stem
-                    data["fans"][f"{name} {label}"] = f"{rpm} RPM"
+                    data["fans"][f"{hw_name} {label}"] = f"{rpm} RPM"
         return data
 
     def get_cpu_frequencies(self) -> list[dict[str, Any]]:
@@ -218,12 +220,6 @@ sensors_api = SensorsAPI()
 
 
 class Sensors(Yarn):
-    name = "sensors"
-    layer = 10
-    description = "Hardware sensors, telemetry, and CPU frequency reporting"
-    publisher = "textile"
-    version = "1.0.0"
-    resources = ()
 
 
     def is_available(self) -> bool:
