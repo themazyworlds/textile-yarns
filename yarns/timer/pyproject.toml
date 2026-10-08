@@ -3,6 +3,7 @@ name = "textile-yarn-timer"
 version = "1.0.0"
 description = "Countdown timers and reminder notifications"
 authors = [{ name = "textile" }]
+requires-python = ">=3.14"
 dependencies = []
 
 [tool.textile]

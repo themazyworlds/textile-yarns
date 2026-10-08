@@ -3,6 +3,7 @@ name = "textile-yarn-process"
 version = "1.0.0"
 description = "Process lifecycle management, list, priority, and signaling"
 authors = [{ name = "textile" }]
+requires-python = ">=3.14"
 dependencies = [
     "psutil",
 ]

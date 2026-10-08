@@ -3,6 +3,7 @@ name = "textile-yarn-sensors"
 version = "1.0.0"
 description = "Hardware sensors, telemetry, and CPU frequency reporting"
 authors = [{ name = "textile" }]
+requires-python = ">=3.14"
 dependencies = [
     "psutil",
 ]

@@ -3,6 +3,7 @@ name = "textile-yarn-dbus_system"
 version = "1.0.0"
 description = "D-Bus system and session bus inspection and call dispatching"
 authors = [{ name = "textile" }]
+requires-python = ">=3.14"
 dependencies = [
     "dbus_fast",
 ]
