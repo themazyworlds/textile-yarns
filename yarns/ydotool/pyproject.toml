@@ -2,6 +2,7 @@
 name = "textile-yarn-ydotool"
 version = "1.0.0"
 description = "Synthetic mouse and keyboard input events via ydotool / uinput"
+authors = [{ name = "textile" }]
 dependencies = [
     "pyxclip>=1.0.0",
 ]

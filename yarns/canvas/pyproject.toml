@@ -2,6 +2,7 @@
 name = "textile-yarn-canvas"
 version = "1.0.0"
 description = "Quickshell GTK desktop visual presence canvas overlay"
+authors = [{ name = "textile" }]
 dependencies = []
 
 [tool.textile]

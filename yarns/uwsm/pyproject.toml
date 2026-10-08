@@ -2,6 +2,7 @@
 name = "textile-yarn-uwsm"
 version = "1.0.0"
 description = "Systemd and UWSM scope and session management integration"
+authors = [{ name = "textile" }]
 dependencies = []
 
 [tool.textile]

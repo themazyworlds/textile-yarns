@@ -2,6 +2,7 @@
 name = "textile-yarn-screen_vision"
 version = "1.0.0"
 description = "Desktop screenshot capture and screen vision analysis"
+authors = [{ name = "textile" }]
 dependencies = [
     "Pillow",
     "mss",

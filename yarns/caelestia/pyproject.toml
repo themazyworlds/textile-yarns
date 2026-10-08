@@ -2,6 +2,7 @@
 name = "textile-yarn-caelestia"
 version = "1.0.0"
 description = "Caelestia desktop shell IPC, drawer, lock screen, and screenshot controls"
+authors = [{ name = "textile" }]
 dependencies = []
 
 [tool.textile]
