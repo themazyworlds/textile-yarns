@@ -9,7 +9,7 @@ import os
 import shutil
 import sys
 from collections.abc import AsyncGenerator, AsyncIterable
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
 # LiveKit compatibility bridge for MCP 2.x
 with contextlib.suppress(Exception):
@@ -19,13 +19,24 @@ with contextlib.suppress(Exception):
     if not hasattr(mcp.client.streamable_http, session_cb_key):
         setattr(mcp.client.streamable_http, session_cb_key, Any)
 
-try:
+if TYPE_CHECKING:
     from livekit.agents.llm.mcp import MCPServerStdio, MCPToolset
     from livekit.agents.voice import Agent
-except ImportError:
-    MCPServerStdio = Any
-    MCPToolset = Any
-    Agent = object
+else:
+    try:
+        from livekit.agents.llm.mcp import MCPServerStdio, MCPToolset
+        from livekit.agents.voice import Agent
+    except ImportError:
+        class Agent:
+            pass
+
+        class MCPServerStdio:
+            def __init__(self, *args: Any, **kwargs: Any) -> None:
+                pass
+
+        class MCPToolset:
+            def __init__(self, *args: Any, **kwargs: Any) -> None:
+                pass
 
 from textile import Yarn, fabric_instructions, loom, stream_engine
 

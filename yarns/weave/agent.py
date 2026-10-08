@@ -8,11 +8,12 @@ import asyncio
 from livekit.agents import AgentServer, AutoSubscribe, JobContext, cli
 from livekit.agents.voice import AgentSession
 from livekit.plugins import google
-from textile import EventUrgency, elastic, loom
+from textile import EventUrgency, elastic
 from weave import (
     WeaveAgent,
     build_textile_toolset,
     compose_system_prompt,
+    get_weave_settings,
     prewarm_livekit_pipeline,
 )
 
@@ -24,7 +25,7 @@ async def entrypoint(ctx: JobContext):
     ctx.log_context_fields = {"room": ctx.room.name}
     await asyncio.to_thread(prewarm_livekit_pipeline)
 
-    settings = loom.get_settings("weave")
+    settings = get_weave_settings()
 
     realtime_model = google.realtime.RealtimeModel(
         model=settings.model,
