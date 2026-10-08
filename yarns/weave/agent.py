@@ -6,13 +6,12 @@ Handles AgentServer initialization, RTC session lifecycle, and runtime execution
 from livekit.agents import AgentServer, AutoSubscribe, JobContext, cli
 from livekit.agents.voice import AgentSession
 from livekit.plugins import google
-from textile import EventUrgency, elastic
+from textile import EventUrgency, elastic, loom
 
 from weave import (
     WeaveAgent,
     build_textile_toolset,
     compose_system_prompt,
-    get_weave_settings,
 )
 
 server = AgentServer()
@@ -22,7 +21,7 @@ server = AgentServer()
 async def entrypoint(ctx: JobContext):
     ctx.log_context_fields = {"room": ctx.room.name}
 
-    settings = get_weave_settings()
+    settings = loom.get_settings("weave")
 
     realtime_model = google.realtime.RealtimeModel(
         model=settings.model,
