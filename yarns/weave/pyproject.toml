@@ -11,7 +11,19 @@ dependencies = [
 layer = 150
 resources = ["sound:pipewire", "sound:pulseaudio", "display:wayland"]
 
-[tool.textile.settings]
-model = "gemini-3.8-live"
-voice = "Puck"
-instructions = "You are Textile Weave, an ultra-fast, friendly, intelligent voice companion embedded into Linux desktop."
+[tool.textile.settings.model]
+default = "gemini-3.8-live"
+type = "str"
+description = "Google Gemini Realtime model identifier"
+choices = ["gemini-3.8-live", "gemini-2.5-flash-native-audio-preview-12-2025", "gemini-2.0-flash-exp"]
+
+[tool.textile.settings.voice]
+default = "Puck"
+type = "str"
+description = "Voice profile for audio synthesis"
+choices = ["Puck", "Charon", "Aoede", "Fenrir", "Kore"]
+
+[tool.textile.settings.instructions]
+default = "You are Textile Weave, an ultra-fast, friendly, intelligent voice companion embedded into Linux desktop."
+type = "str"
+description = "Base companion personality instructions"
