@@ -12,7 +12,7 @@ import subprocess
 import time
 from typing import Any
 
-from textile import Yarn, detect_terminal, strand
+from textile import Yarn, strand
 from textile.core.security.guardrails import AccessBoundaryError, SessionProcessGuard
 
 BACKGROUND_JOBS: dict[int, dict[str, Any]] = {}
@@ -48,7 +48,7 @@ class ProcessControl(Yarn):
         try:
             argv = shlex.split(app_clean)
             if is_tui:
-                term = detect_terminal()
+                term = os.environ.get("TERMINAL", "xterm")
                 argv = [term, "-e"] + argv
             proc = subprocess.Popen(argv, shell=False, start_new_session=True, cwd=os.getcwd())
             self.register_bg_job(proc.pid, app_clean, "app")

@@ -4,13 +4,13 @@ Exposes app launching and unit management via systemd user units under UWSM scop
 Layer 150 (Session Manager).
 """
 
+import os
 import shlex
 import shutil
 import subprocess
 
 from textile import (
     Yarn,
-    detect_terminal,
     strand,
 )
 
@@ -69,7 +69,7 @@ class UWSM(Yarn):
         uwsm_bin = _get_bin("uwsm")
 
         if is_tui:
-            term = detect_terminal()
+            term = os.environ.get("TERMINAL", "xterm")
             full_cmd = [uwsm_bin, "app", "--", term, "-e", *parsed_cmd, *extra_args]
         else:
             full_cmd = [uwsm_bin, "app", "--", *parsed_cmd, *extra_args]

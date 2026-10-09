@@ -3,19 +3,60 @@ Weave Subsystem - Core Domain Logic & Agent Definition.
 Provides WeaveAgent class, streaming transcription node filtering, prompt instructions, and toolset initialization.
 """
 
+import contextlib
 import os
 import shutil
+import subprocess
 import sys
 from collections.abc import AsyncGenerator, AsyncIterable
+from pathlib import Path
 from typing import Any
 
 from livekit.agents.llm.mcp import MCPServerStdio, MCPToolset
 from livekit.agents.voice import Agent
-from textile import Yarn, fabric_instructions, loom, stream_engine
+from textile import Yarn, fabric_instructions, loom, strand, stream_engine
 
 
 class WeaveYarn(Yarn):
     """Weave Voice AI Capability Yarn managing runtime settings and LiveKit integration."""
+
+    @strand(tier="privileged", no_timeout=True, isolated=False)
+    def run_weave(self, dev: bool = False, text: bool = False) -> str:
+        """Launch Weave real-time voice & desktop companion.
+
+        :param dev: Enable developer mode with automatic reload on file changes.
+        :param text: Enable text-only mode (console prompt without mic/speaker audio).
+        """
+        lk_bin = shutil.which("lk")
+        if not lk_bin:
+            return (
+                "Error: LiveKit CLI ('lk') not found on PATH.\n"
+                "Install: curl -sSL https://get.livekit.io/cli | bash && lk cloud auth"
+            )
+
+        weave_dir = Path(__file__).resolve().parent
+        agent_file = weave_dir / "agent.py"
+        if not agent_file.exists():
+            return f"Error: Agent entrypoint not found at {agent_file}"
+
+        cmd = [lk_bin, "agent", "dev" if dev else "console"]
+        if not dev and text:
+            cmd.append("--text")
+        cmd.append("agent.py")
+
+        env = dict(os.environ)
+        curr: Path | None = weave_dir
+        while curr and curr != curr.parent:
+            candidate = curr / ".venv"
+            if candidate.is_dir():
+                env["VIRTUAL_ENV"] = str(candidate)
+                env["PATH"] = f"{candidate / 'bin'}:{env.get('PATH', '')}"
+                break
+            curr = curr.parent
+
+        with contextlib.suppress(KeyboardInterrupt):
+            subprocess.run(cmd, cwd=str(weave_dir), env=env, check=False)
+        return "Weave voice session terminated."
 
 
 class WeaveAgent(Agent):

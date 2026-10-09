@@ -9,4 +9,4 @@ dependencies = []
 [tool.textile]
 tailor = "textile"
 layer = 100
-resources = ["display:wayland", "display:x11", "dbus:session"]
+resources = ["display:wayland", "display:x11", "dbus:session", "socket:$XDG_RUNTIME_DIR/quickshell"]

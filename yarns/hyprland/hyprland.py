@@ -15,7 +15,7 @@ import subprocess
 import time
 from typing import Any, Literal
 
-from textile import Yarn, detect_terminal, strand
+from textile import Yarn, strand
 
 
 class HyprlandIPC:
@@ -442,7 +442,7 @@ class HyprlandIPC:
     def exec_app(self, app: str, is_tui: bool = False, title: str | None = None) -> str:
         app_clean = app.strip()
         if is_tui:
-            term = detect_terminal()
+            term = os.environ.get("TERMINAL", "xterm")
             cmd = f"{term} -T {title} -e {app_clean}" if title else f"{term} -e {app_clean}"
         else:
             cmd = app_clean

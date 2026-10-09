@@ -147,8 +147,6 @@ canvas_ctl = CanvasController()
 
 
 class Canvas(Yarn):
-
-
     """Quickshell Emotive Canvas & Mood System Yarn."""
 
     def is_available(self) -> bool:
@@ -189,27 +187,15 @@ class Canvas(Yarn):
             elastic.subscribe("voice.state", _on_voice_state),
         ]
 
-        # Auto-launch Canvas UI window when yarn is active and available (unless in test suite)
-        if (
-            not os.environ.get("TEXTILE_TESTING")
-            and not os.environ.get("PYTEST_CURRENT_TEST")
-            and self.is_available()
-            and not canvas_ctl.is_running()
-        ):
-            canvas_ctl.launch()
-
     def on_unload(self) -> None:
         if hasattr(self, "_sub_tokens"):
             for tok in self._sub_tokens:
                 elastic.unsubscribe(tok)
             self._sub_tokens.clear()
-        # Close canvas on yarn unload / disable
-        if canvas_ctl.is_running():
-            canvas_ctl.close()
 
-    @weft(pattern=r"<mood:\s*([a-zA-Z_-]+)\s*>")
+    @weft(pattern=r"<(?:mood|on_stream_mood):\s*([a-zA-Z_-]+)\s*>")
     def on_stream_mood(self, mood: str) -> None:
-        """Emit inline semantic mood tags across your speech to animate avatar face in real time.
+        """Emit inline semantic mood tags (e.g. <mood:happy>, <mood:thinking>) across your speech to animate avatar face in real time.
         Supported moods: neutral, happy, excited, celebrating, thinking, focused, listening, curious, calm,
         shy, mischievous, confused, surprised, alert, sleepy, error, glitch.
         Example: '<mood:curious> Let me inspect that... <mood:happy> All set!'
@@ -227,7 +213,7 @@ class Canvas(Yarn):
         )
         canvas_ctl.call_ipc("setMood", clean_mood)
 
-    @weft(pattern=r"<gaze:\s*(-?\d+(?:\.\d+)?)\s*,\s*(-?\d+(?:\.\d+)?)\s*>")
+    @weft(pattern=r"<(?:gaze|on_stream_gaze):\s*(-?\d+(?:\.\d+)?)\s*,\s*(-?\d+(?:\.\d+)?)\s*>")
     def on_stream_gaze(self, x: float, y: float) -> None:
         """Emit inline eye gaze offsets (where X is -16.0 to 16.0, Y is -12.0 to 12.0, e.g. <gaze:8.0,-5.0>)."""
         canvas_ctl.call_ipc("setGaze", str(x), str(y))
@@ -277,7 +263,10 @@ class Canvas(Yarn):
 
     @strand(tier="interact")
     def canvas_set_talking(self, talking: bool = True) -> str:
-        """Toggle canvas speaking/talking mouth animation.
+        """Toggle canvas speaking/talking mouth animation for CLI/desktop automation scripts.
+
+        NOTE FOR VOICE AGENTS: NEVER call this tool during live voice sessions. The engine automatically
+        animates talking states.
 
         :param talking: True to animate speaking mouth, False to stop.
         """
@@ -287,7 +276,10 @@ class Canvas(Yarn):
 
     @strand(tier="interact")
     def canvas_set_listening(self, listening: bool = True) -> str:
-        """Toggle canvas listening visual state.
+        """Toggle canvas listening visual state for CLI/desktop automation scripts.
+
+        NOTE FOR VOICE AGENTS: NEVER call this tool during live voice sessions. The engine automatically
+        synchronizes listening visual states.
 
         :param listening: True when the agent or assistant is actively listening to audio.
         """
