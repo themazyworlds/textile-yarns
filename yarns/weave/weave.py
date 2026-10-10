@@ -7,13 +7,15 @@ import contextlib
 import os
 import shutil
 import subprocess
-import sys
 from collections.abc import AsyncGenerator, AsyncIterable
 from pathlib import Path
 from typing import Any
 
+from livekit.agents import llm
 from livekit.agents.llm.mcp import MCPServerStdio, MCPToolset
 from livekit.agents.voice import Agent
+from reasoning import run_reasoning_task
+
 from textile import Yarn, fabric_instructions, loom, strand, stream_engine
 
 
@@ -65,10 +67,12 @@ class WeaveAgent(Agent):
     async def transcription_node(
         self,
         text: AsyncIterable[str | Any],
-        model_settings: Any,
+        _model_settings: Any,
     ) -> AsyncGenerator[str | Any]:
         async for delta in text:
-            delta_text = getattr(delta, "text", None) or (delta if isinstance(delta, str) else str(delta))
+            delta_text = getattr(delta, "text", None) or (
+                delta if isinstance(delta, str) else str(delta)
+            )
             clean_delta = stream_engine.process_stream(delta_text, loom.wefts)
             if clean_delta:
                 if isinstance(delta, str):
@@ -77,8 +81,19 @@ class WeaveAgent(Agent):
                     try:
                         delta.text = clean_delta
                         yield delta
-                    except (AttributeError, TypeError):
+                    except AttributeError, TypeError:
                         yield clean_delta
+
+
+@llm.function_tool(
+    description=(
+        "Delegate complex multi-step reasoning, system diagnosis, window management, or desktop investigation "
+        "to the Pydantic AI deep reasoning backend."
+    )
+)
+async def reason_and_execute(task: str) -> str:
+    """Delegate complex multi-step reasoning to the Pydantic AI backend."""
+    return await run_reasoning_task(task)
 
 
 def build_textile_toolset() -> MCPToolset:

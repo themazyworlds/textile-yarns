@@ -8,9 +8,9 @@ from typing import Any
 from livekit.agents import AgentServer, AutoSubscribe, JobContext, cli
 from livekit.agents.voice import AgentSession
 from livekit.plugins import google
-from textile import EventUrgency, elastic, loom
+from weave import WeaveAgent, build_textile_toolset, compose_system_prompt, reason_and_execute
 
-from weave import WeaveAgent, build_textile_toolset, compose_system_prompt
+from textile import EventUrgency, elastic, loom
 
 server = AgentServer()
 
@@ -70,7 +70,7 @@ async def entrypoint(ctx: JobContext):
 
     agent = WeaveAgent(
         instructions=compose_system_prompt(base_instructions=settings.instructions),
-        tools=[textile_toolset],
+        tools=[textile_toolset, reason_and_execute],
     )
 
     await ctx.connect(auto_subscribe=AutoSubscribe.AUDIO_ONLY)
