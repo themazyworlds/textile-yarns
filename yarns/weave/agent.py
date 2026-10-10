@@ -3,6 +3,7 @@ agent.py - Main LiveKit Connection Entrypoint & Server Dispatcher.
 Handles AgentServer initialization, RTC session lifecycle, and runtime execution loops.
 """
 
+import contextlib
 from typing import Any
 
 from livekit.agents import AgentServer, AutoSubscribe, JobContext, cli
@@ -72,6 +73,22 @@ async def entrypoint(ctx: JobContext):
         instructions=compose_system_prompt(base_instructions=settings.instructions),
         tools=[textile_toolset, reason_and_execute],
     )
+
+    async def on_desktop_alert(frame: Any) -> None:
+        """Handle incoming high-urgency alerts from Textile Elastic bus."""
+        if frame.topic.startswith("voice.") or frame.source == "weave":
+            return
+        instructions = f"Inform the user concisely about this system event: {frame.summary}"
+        with contextlib.suppress(Exception):
+            await session.generate_reply(instructions=instructions)
+
+    sub_token = elastic.subscribe(
+        pattern="*",
+        callback=on_desktop_alert,
+        min_urgency=EventUrgency.ALERT,
+    )
+
+    ctx.add_shutdown_callback(lambda: elastic.unsubscribe(sub_token))
 
     await ctx.connect(auto_subscribe=AutoSubscribe.AUDIO_ONLY)
     await session.start(room=ctx.room, agent=agent)
