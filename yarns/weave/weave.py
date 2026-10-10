@@ -11,10 +11,21 @@ from collections.abc import AsyncGenerator, AsyncIterable
 from pathlib import Path
 from typing import Any
 
-from livekit.agents import llm
-from livekit.agents.llm.mcp import MCPServerStdio, MCPToolset
-from livekit.agents.voice import Agent
-from reasoning import run_reasoning_task
+try:
+    from livekit.agents import llm
+    from livekit.agents.llm.mcp import MCPServerStdio, MCPToolset
+    from livekit.agents.voice import Agent
+except ImportError:
+    Agent = object  # type: ignore[misc,assignment]
+    llm = None  # type: ignore[assignment]
+    MCPServerStdio = None  # type: ignore[misc,assignment]
+    MCPToolset = None  # type: ignore[misc,assignment]
+
+try:
+    from reasoning import run_reasoning_task
+except ImportError:
+    async def run_reasoning_task(_task: str) -> str:  # type: ignore[misc]
+        return "Reasoning engine unavailable."
 
 from textile import Yarn, fabric_instructions, loom, strand, stream_engine
 
@@ -81,23 +92,29 @@ class WeaveAgent(Agent):
                     try:
                         delta.text = clean_delta
                         yield delta
-                    except AttributeError, TypeError:
+                    except (AttributeError, TypeError):
                         yield clean_delta
 
 
-@llm.function_tool(
-    description=(
-        "Delegate complex multi-step reasoning, system diagnosis, window management, or desktop investigation "
-        "to the Pydantic AI deep reasoning backend."
-    )
-)
 async def reason_and_execute(task: str) -> str:
     """Delegate complex multi-step reasoning to the Pydantic AI backend."""
     return await run_reasoning_task(task)
 
 
-def build_textile_toolset() -> MCPToolset:
+if llm is not None:
+    reason_and_execute = llm.function_tool(  # type: ignore[assignment]
+        description=(
+            "Delegate complex multi-step reasoning, system diagnosis, window management, or desktop investigation "
+            "to the Pydantic AI deep reasoning backend."
+        )
+    )(reason_and_execute)
+
+
+def build_textile_toolset() -> Any:
     """Configures the isolated Textile twill MCP toolset environment."""
+    if MCPToolset is None or MCPServerStdio is None:
+        return None
+
     textile_env = dict(os.environ)
     textile_env["TEXTILE_CALLER"] = "weave"
 
