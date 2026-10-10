@@ -85,16 +85,12 @@ def build_textile_toolset() -> MCPToolset:
     """Configures the isolated Textile twill MCP toolset environment."""
     textile_env = dict(os.environ)
     textile_env["TEXTILE_CALLER"] = "weave"
-    textile_cmd = shutil.which("textile") or sys.executable
-    textile_args = (
-        ["twill"] if shutil.which("textile") else ["-c", "from textile.core.cli import main; main()", "twill"]
-    )
 
     return MCPToolset(
         id="textile",
         mcp_server=MCPServerStdio(
-            command=textile_cmd,
-            args=textile_args,
+            command="uv",
+            args=["run", "textile", "twill"],
             env=textile_env,
             client_session_timeout_seconds=60.0,
         ),
