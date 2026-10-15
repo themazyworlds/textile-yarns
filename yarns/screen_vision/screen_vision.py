@@ -19,7 +19,7 @@ try:
 except (ImportError, AttributeError, OSError):
     Image = None
 
-from textile import Yarn, strand
+from needle import Yarn, strand
 
 
 class ScreenVisionEngine:
@@ -77,7 +77,7 @@ class ScreenVision(Yarn):
     def is_available(self) -> bool:
         return True
 
-    @strand()
+    @strand(tier="observe")
     def capture_screen(self, purpose: str | None = None) -> str:
         """Capture a high-resolution screenshot snapshot of the active screen and windows.
 

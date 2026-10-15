@@ -3,10 +3,16 @@ name = "textile-yarn-timer"
 version = "1.0.0"
 description = "Countdown timers and reminder notifications"
 authors = [{ name = "textile" }]
-requires-python = ">=3.14"
+requires-python = ">=3.15"
 dependencies = []
 
 [tool.textile]
 tailor = "textile"
 layer = 10
 resources = []
+
+[tool.pyright]
+extraPaths = [
+    "../../../textile/textile-needle/src",
+    "../../../textile/textile-core/src",
+]

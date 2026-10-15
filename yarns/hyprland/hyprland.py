@@ -15,7 +15,7 @@ import subprocess
 import time
 from typing import Any, Literal
 
-from textile import Yarn, strand
+from needle import Yarn, strand
 
 
 class HyprlandIPC:

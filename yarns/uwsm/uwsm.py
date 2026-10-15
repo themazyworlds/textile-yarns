@@ -9,10 +9,7 @@ import shlex
 import shutil
 import subprocess
 
-from textile import (
-    Yarn,
-    strand,
-)
+from needle import Yarn, strand
 
 
 def _get_bin(name: str) -> str:
@@ -23,8 +20,6 @@ def _get_bin(name: str) -> str:
 
 
 class UWSM(Yarn):
-
-
     def is_available(self) -> bool:
         return shutil.which("uwsm") is not None
 
@@ -35,21 +30,33 @@ class UWSM(Yarn):
             cmd.append(target)
         try:
             res = subprocess.run(
-                cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True, timeout=5, check=False
+                cmd,
+                stdout=subprocess.PIPE,
+                stderr=subprocess.STDOUT,
+                text=True,
+                timeout=5,
+                check=False,
             )
             return res.stdout
         except (OSError, subprocess.SubprocessError) as e:
             return f"Error running UWSM action: {e}"
 
     @strand(capability="desktop.app_launcher", tier="interact")
-    def launch_app(self, command: str, is_tui: bool = False, args: list[str] | None = None) -> str:
+    def launch_app(
+        self,
+        command: str = "",
+        is_tui: bool = False,
+        args: list[str] | None = None,
+        app: str = "",
+    ) -> str:
         """Launch a desktop application inside a dedicated systemd user scope via UWSM for clean cgroup tracking.
 
         :param command: The command or binary name to launch (e.g. 'firefox', 'foot', 'nvim').
+        :param app: The command or binary name to launch (alias for command).
         :param is_tui: Terminal/TUI application flag (e.g. launches inside terminal with -e).
         :param args: Optional list of arguments for the application.
         """
-        raw_cmd = str(command or "").strip()
+        raw_cmd = str(command or app or "").strip()
         if not raw_cmd:
             return "Error: No command specified to launch."
 
@@ -68,18 +75,32 @@ class UWSM(Yarn):
         extra_args = [str(a) for a in cmd_args]
         uwsm_bin = _get_bin("uwsm")
 
+        full_cmd = [uwsm_bin, "app", "-t", "service"]
         if is_tui:
-            term = os.environ.get("TERMINAL", "xterm")
-            full_cmd = [uwsm_bin, "app", "--", term, "-e", *parsed_cmd, *extra_args]
-        else:
-            full_cmd = [uwsm_bin, "app", "--", *parsed_cmd, *extra_args]
+            full_cmd.append("-T")
+        full_cmd.extend(["--", *parsed_cmd, *extra_args])
 
         try:
-            proc = subprocess.Popen(
-                full_cmd, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, start_new_session=True
+            res = subprocess.run(
+                full_cmd,
+                capture_output=True,
+                text=True,
+                timeout=5,
+                check=False,
+                env=os.environ.copy(),
             )
-            mode_str = " (TUI terminal scope)" if is_tui else ""
-            return f"Successfully launched '{raw_cmd}' via UWSM cgroup scope{mode_str} (PID {proc.pid})."
+            if res.returncode != 0:
+                err = (
+                    res.stderr.strip()
+                    or res.stdout.strip()
+                    or f"Exit code {res.returncode}"
+                )
+                return f"Error launching app via UWSM: {err}"
+
+            mode_str = " (TUI terminal service)" if is_tui else ""
+            return (
+                f"Successfully launched '{raw_cmd}' via UWSM systemd service{mode_str}."
+            )
         except (OSError, subprocess.SubprocessError) as e:
             return f"Error launching app via UWSM: {e}"
 
@@ -163,7 +184,9 @@ class UWSM(Yarn):
                     timeout=5,
                     check=False,
                 )
-                return res.stdout.strip() or f"Successfully stopped unit '{target_unit}'."
+                return (
+                    res.stdout.strip() or f"Successfully stopped unit '{target_unit}'."
+                )
             except (OSError, subprocess.SubprocessError) as e:
                 return f"Error stopping unit '{target_unit}': {e}"
         return self._run_uwsm("stop")

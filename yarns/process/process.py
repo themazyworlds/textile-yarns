@@ -12,8 +12,8 @@ import subprocess
 import time
 from typing import Any
 
-from textile import Yarn, strand
-from textile.core.security.guardrails import AccessBoundaryError, SessionProcessGuard
+from needle import Yarn, strand
+from needle.guardrails import AccessBoundaryError, SessionProcessGuard
 
 BACKGROUND_JOBS: dict[int, dict[str, Any]] = {}
 MAX_PROC_SCAN_LIMIT = 50
@@ -36,20 +36,24 @@ class ProcessControl(Yarn):
         }
 
     @strand(capability="desktop.app_launcher", tier="interact")
-    def launch_app(self, app: str, is_tui: bool = False) -> str:
+    def launch_app(self, command: str = "", is_tui: bool = False, app: str = "") -> str:
         """Launch a desktop application or background command.
 
         :param app: Application command or binary to launch.
+        :param command: Application command or binary to launch (alias for app).
         :param is_tui: Whether to launch in a terminal (e.g. -e nvim).
         """
-        app_clean = app.strip()
+        app_clean = (app or command).strip()
         if not app_clean:
             return "Error: No application command provided."
         try:
             argv = shlex.split(app_clean)
             if is_tui:
-                term = os.environ.get("TERMINAL", "xterm")
-                argv = [term, "-e"] + argv
+                term = os.environ.get("TERMINAL") or "xdg-terminal-exec"
+                if "xdg-terminal-exec" in term:
+                    argv = [term] + argv
+                else:
+                    argv = [term, "-e"] + argv
             proc = subprocess.Popen(argv, shell=False, start_new_session=True, cwd=os.getcwd())
             self.register_bg_job(proc.pid, app_clean, "app")
             mode_str = " in terminal" if is_tui else ""

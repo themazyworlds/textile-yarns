@@ -3,7 +3,7 @@ name = "textile-yarn-screen_vision"
 version = "1.0.0"
 description = "Desktop screenshot capture and screen vision analysis"
 authors = [{ name = "textile" }]
-requires-python = ">=3.14"
+requires-python = ">=3.15"
 dependencies = [
     "Pillow",
     "mss",
@@ -13,3 +13,9 @@ dependencies = [
 tailor = "textile"
 layer = 10
 resources = ["display:wayland", "display:x11"]
+
+[tool.pyright]
+extraPaths = [
+    "../../../textile/textile-needle/src",
+    "../../../textile/textile-core/src",
+]

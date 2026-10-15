@@ -3,10 +3,16 @@ name = "textile-yarn-caelestia"
 version = "1.0.0"
 description = "Caelestia desktop shell IPC, drawer, lock screen, and screenshot controls"
 authors = [{ name = "textile" }]
-requires-python = ">=3.14"
+requires-python = ">=3.15"
 dependencies = []
 
 [tool.textile]
 tailor = "textile"
 layer = 100
 resources = ["display:wayland", "display:x11", "dbus:session"]
+
+[tool.pyright]
+extraPaths = [
+    "../../../textile/textile-needle/src",
+    "../../../textile/textile-core/src",
+]

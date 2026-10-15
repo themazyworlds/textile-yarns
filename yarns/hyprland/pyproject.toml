@@ -3,10 +3,16 @@ name = "textile-yarn-hyprland"
 version = "1.0.0"
 description = "Hyprland compositor IPC, workspace navigation, and window controls"
 authors = [{ name = "textile" }]
-requires-python = ">=3.14"
+requires-python = ">=3.15"
 dependencies = []
 
 [tool.textile]
 tailor = "textile"
 layer = 100
 resources = ["socket:$XDG_RUNTIME_DIR/hypr", "env:HYPRLAND_INSTANCE_SIGNATURE", "env:XDG_RUNTIME_DIR"]
+
+[tool.pyright]
+extraPaths = [
+    "../../../textile/textile-needle/src",
+    "../../../textile/textile-core/src",
+]

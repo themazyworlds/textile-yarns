@@ -13,7 +13,7 @@ try:
 except (ImportError, AttributeError, OSError):
     pyxclip = None
 
-from textile import Yarn, strand
+from needle import Yarn, strand
 
 logger = logging.getLogger(__name__)
 

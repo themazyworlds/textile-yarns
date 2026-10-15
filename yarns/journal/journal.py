@@ -13,7 +13,7 @@ import subprocess
 from dataclasses import dataclass
 from typing import Any
 
-from textile import Yarn, strand
+from needle import Yarn, strand
 
 
 @dataclass

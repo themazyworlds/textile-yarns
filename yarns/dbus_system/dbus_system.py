@@ -14,7 +14,7 @@ import threading
 from dataclasses import dataclass
 from typing import TYPE_CHECKING, Any, Literal
 
-from textile import Yarn, strand
+from needle import Yarn, strand
 
 
 @dataclass

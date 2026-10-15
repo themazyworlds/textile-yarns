@@ -3,7 +3,7 @@ name = "textile-yarn-dbus_system"
 version = "1.0.0"
 description = "D-Bus system and session bus inspection and call dispatching"
 authors = [{ name = "textile" }]
-requires-python = ">=3.14"
+requires-python = ">=3.15"
 dependencies = [
     "dbus_fast",
 ]
@@ -12,3 +12,9 @@ dependencies = [
 tailor = "textile"
 layer = 50
 resources = ["dbus:session", "dbus:system"]
+
+[tool.pyright]
+extraPaths = [
+    "../../../textile/textile-needle/src",
+    "../../../textile/textile-core/src",
+]

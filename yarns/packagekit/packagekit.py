@@ -26,8 +26,8 @@ else:
         Variant = Any
         MessageBus = Any
 
-from textile import Yarn, strand
-from textile.core.definitions.errors import SAFE_EXCEPTIONS
+from needle import Yarn, strand
+from needle.errors import SAFE_EXCEPTIONS
 
 logger = logging.getLogger(__name__)
 

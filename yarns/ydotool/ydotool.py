@@ -17,9 +17,7 @@ except ImportError:
 
 from typing import ClassVar
 
-from textile import Yarn, sensory_tapestry, strand
-
-
+from needle import Yarn, strand
 class Ydotool(Yarn):
 
     KEY_MAP: ClassVar[dict[str, int]] = {
@@ -213,7 +211,7 @@ class Ydotool(Yarn):
         term_mode = is_terminal
         if term_mode is None:
             try:
-                active_win = sensory_tapestry.get_slot("hyprland.active_window") or {}
+                active_win = self.get_slot("hyprland.active_window") or {}
                 cls_name = (
                     str(active_win.get("class", ""))
                     if isinstance(active_win, dict)

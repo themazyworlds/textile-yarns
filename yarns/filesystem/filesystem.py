@@ -20,8 +20,8 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Any, Literal
 
-from textile import Yarn, strand
-from textile.core.security.guardrails import ScopedPath
+from needle import Yarn, strand
+from needle.guardrails import ScopedPath
 
 logger = logging.getLogger(__name__)
 
@@ -584,7 +584,7 @@ class FilesystemStorage(Yarn):
         """
         return file_io.replace(path, target=target, replacement=replacement)
 
-    @strand()
+    @strand(tier="observe")
     def file_list(self, path: str = ".") -> list[dict[str, Any]]:
         """List files and directories within a target directory path.
 
@@ -592,7 +592,7 @@ class FilesystemStorage(Yarn):
         """
         return file_io.list_dir(path or ".")
 
-    @strand()
+    @strand(tier="observe")
     def file_find(self, path: str = ".", pattern: str = "*") -> list[str]:
         """Search for files matching a glob pattern in a directory path.
 
@@ -601,7 +601,7 @@ class FilesystemStorage(Yarn):
         """
         return file_io.find(path or ".", pattern=pattern or "*")
 
-    @strand()
+    @strand(tier="observe")
     def file_stat(self, path: str) -> dict[str, Any]:
         """Get stat metadata, permissions, size, and timestamps for a file path.
 
@@ -609,7 +609,7 @@ class FilesystemStorage(Yarn):
         """
         return file_io.stat(path)
 
-    @strand()
+    @strand(tier="mutate")
     def file_chmod(self, path: str, mode: str) -> str:
         """Change permissions mode for a file or directory path.
 
@@ -618,7 +618,7 @@ class FilesystemStorage(Yarn):
         """
         return file_io.chmod(path, mode=mode)
 
-    @strand()
+    @strand(tier="observe")
     def storage_disk_usage(self, path: str = "/") -> dict[str, Any]:
         """Get total, used, and available disk usage for a storage path.
 
@@ -626,12 +626,12 @@ class FilesystemStorage(Yarn):
         """
         return file_io.disk_usage(path or "/")
 
-    @strand()
+    @strand(tier="observe")
     def storage_list_mounts(self) -> list[dict[str, Any]]:
         """List mounted filesystems and storage devices."""
         return file_io.list_mounts()
 
-    @strand()
+    @strand(tier="mutate")
     def file_op(
         self,
         operation: Literal[
@@ -701,7 +701,7 @@ class FilesystemStorage(Yarn):
             return handlers[op]()
         return f"Unknown file operation '{op}'."
 
-    @strand()
+    @strand(tier="interact")
     def inotify_watch(self, path: str, events: str = "all", recursive: bool = False) -> dict[str, Any]:
         """Add a Linux inotify kernel watch on a file or directory.
 
@@ -711,7 +711,7 @@ class FilesystemStorage(Yarn):
         """
         return inotify_api.add_watch(path.strip(), events=events, recursive=recursive)
 
-    @strand()
+    @strand(tier="observe")
     def inotify_wait_event(self, path: str, events: str = "all", timeout_seconds: float = 5.0) -> dict[str, Any]:
         """Wait synchronously for a specific filesystem event on a path.
 
@@ -721,7 +721,7 @@ class FilesystemStorage(Yarn):
         """
         return inotify_api.wait_for_event(path.strip(), events=events, timeout_seconds=timeout_seconds)
 
-    @strand()
+    @strand(tier="observe")
     def inotify_read_events(self, timeout_ms: int = 100, max_events: int = 50) -> list[dict[str, Any]]:
         """Poll and read available inotify kernel events from active watches.
 
@@ -730,7 +730,7 @@ class FilesystemStorage(Yarn):
         """
         return inotify_api.read_events(timeout_ms=timeout_ms, max_events=max_events)
 
-    @strand()
+    @strand(tier="interact")
     def inotify_unwatch(self, watch: str) -> dict[str, Any]:
         """Remove an active inotify watch by descriptor ID or path.
 
@@ -738,7 +738,7 @@ class FilesystemStorage(Yarn):
         """
         return inotify_api.remove_watch(watch)
 
-    @strand()
+    @strand(tier="observe")
     def inotify_list_watches(self) -> list[dict[str, Any]]:
         """List all active inotify watch descriptors and paths."""
         return inotify_api.list_watches()

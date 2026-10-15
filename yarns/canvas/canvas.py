@@ -10,11 +10,16 @@ import logging
 import os
 import shutil
 import subprocess
+import sys
 import time
 from pathlib import Path
 from typing import Any
 
-from textile import EventFrame, EventUrgency, Yarn, elastic, sensory_tapestry, strand, weft
+from needle import (
+    EventFrame,
+    Yarn,
+    strand,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -34,8 +39,21 @@ def _get_qml_path() -> str:
 class CanvasController:
     """Controller for Quickshell Canvas subprocess and IPC."""
 
-    def __init__(self):
+    def __init__(self, yarn: Yarn | None = None):
         self._proc: subprocess.Popen | None = None
+        self.yarn = yarn
+
+    def set_slot(self, key: str, value: Any) -> None:
+        if self.yarn is not None:
+            self.yarn.set_slot(key, value)
+        elif "textile.core.telemetry.blackboard" in sys.modules:
+            sys.modules["textile.core.telemetry.blackboard"].sensory_tapestry.set_slot(key, value)
+
+    def stitch(self, level: str, source: str, message: str) -> None:
+        if self.yarn is not None:
+            self.yarn.stitch(level, message)
+        elif "textile.core.telemetry.blackboard" in sys.modules:
+            sys.modules["textile.core.telemetry.blackboard"].sensory_tapestry.stitch(level, source, message)
 
     def get_qml_path(self) -> str:
         return _get_qml_path()
@@ -51,7 +69,7 @@ class CanvasController:
             res = subprocess.run([pgrep_bin, "-f", qml_file], capture_output=True, timeout=0.2, check=False)
             if res.returncode == 0 and res.stdout.strip():
                 return True
-        sensory_tapestry.set_slot("canvas.visible", False)
+        self.set_slot("canvas.visible", False)
         return False
 
     def launch(self) -> str:
@@ -61,7 +79,7 @@ class CanvasController:
             return f"Error: QML file not found at {qml_file}"
 
         if self.is_running():
-            sensory_tapestry.set_slot("canvas.visible", True)
+            self.set_slot("canvas.visible", True)
             return "Canvas is already running."
 
         qs_bin = shutil.which("quickshell") or shutil.which("qs") or "quickshell"
@@ -73,9 +91,9 @@ class CanvasController:
                 start_new_session=True,
             )
             time.sleep(0.3)
-            sensory_tapestry.set_slot("canvas.visible", True)
-            sensory_tapestry.set_slot("canvas.pid", self._proc.pid)
-            sensory_tapestry.stitch("INFO", "canvas", f"Canvas UI launched (PID {self._proc.pid})")
+            self.set_slot("canvas.visible", True)
+            self.set_slot("canvas.pid", self._proc.pid)
+            self.stitch("INFO", "canvas", f"Canvas UI launched (PID {self._proc.pid})")
             return f"Canvas UI launched (PID {self._proc.pid})."
         except (OSError, subprocess.SubprocessError) as e:
             return f"Error launching canvas UI: {e}"
@@ -100,8 +118,8 @@ class CanvasController:
         with contextlib.suppress(OSError, subprocess.SubprocessError):
             subprocess.run([pkill_bin, "-f", qml_file], capture_output=True, timeout=0.2, check=False)
 
-        sensory_tapestry.set_slot("canvas.visible", False)
-        sensory_tapestry.set_slot("canvas.pid", None)
+        self.set_slot("canvas.visible", False)
+        self.set_slot("canvas.pid", None)
         return "Canvas UI closed."
 
     def restart(self) -> str:
@@ -149,6 +167,10 @@ canvas_ctl = CanvasController()
 class Canvas(Yarn):
     """Quickshell Emotive Canvas & Mood System Yarn."""
 
+    def __init__(self, **kwargs: Any) -> None:
+        super().__init__(name="canvas", layer=100, **kwargs)
+        canvas_ctl.yarn = self
+
     def is_available(self) -> bool:
         return bool(shutil.which("quickshell") or shutil.which("qs"))
 
@@ -164,59 +186,34 @@ class Canvas(Yarn):
 
         def _on_mood_change(frame: EventFrame) -> None:
             event = frame.data if isinstance(frame.data, dict) else {}
-            source = frame.source
             mood = str(event.get("mood", "neutral") if isinstance(frame.data, dict) else frame.data).lower().strip()
-            sensory_tapestry.set_slot("canvas.mood", mood)
-            if source != "canvas_weft":
-                canvas_ctl.call_ipc("setMood", mood)
+            self.set_slot("canvas.mood", mood)
+            canvas_ctl.call_ipc("setMood", mood)
 
         def _on_voice_state(frame: EventFrame) -> None:
             event = frame.data if isinstance(frame.data, dict) else {}
             if "talking" in event:
                 talking = bool(event["talking"])
-                sensory_tapestry.set_slot("canvas.is_talking", talking)
+                self.set_slot("canvas.is_talking", talking)
                 canvas_ctl.call_ipc("setTalking", "true" if talking else "false")
             if "listening" in event:
                 listening = bool(event["listening"])
-                sensory_tapestry.set_slot("canvas.is_listening", listening)
+                self.set_slot("canvas.is_listening", listening)
                 canvas_ctl.call_ipc("setListening", "true" if listening else "false")
 
-        self._sub_tokens = [
-            elastic.subscribe("loom.tool_start", _on_tool_start),
-            elastic.subscribe("canvas.mood", _on_mood_change),
-            elastic.subscribe("voice.state", _on_voice_state),
-        ]
+        self._sub_tokens = []
+        if self.elastic is not None:
+            self._sub_tokens = [
+                self.elastic.subscribe("loom.tool_start", _on_tool_start),
+                self.elastic.subscribe("canvas.mood", _on_mood_change),
+                self.elastic.subscribe("voice.state", _on_voice_state),
+            ]
 
     def on_unload(self) -> None:
-        if hasattr(self, "_sub_tokens"):
+        if hasattr(self, "_sub_tokens") and self.elastic is not None:
             for tok in self._sub_tokens:
-                elastic.unsubscribe(tok)
+                self.elastic.unsubscribe(tok)
             self._sub_tokens.clear()
-
-    @weft(pattern=r"<(?:mood|on_stream_mood):\s*([a-zA-Z_-]+)\s*>")
-    def on_stream_mood(self, mood: str) -> None:
-        """Emit inline semantic mood tags (e.g. <mood:happy>, <mood:thinking>) across your speech to animate avatar face in real time.
-        Supported moods: neutral, happy, excited, celebrating, thinking, focused, listening, curious, calm,
-        shy, mischievous, confused, surprised, alert, sleepy, error, glitch.
-        Example: '<mood:curious> Let me inspect that... <mood:happy> All set!'
-        """
-        clean_mood = mood.lower().strip()
-        sensory_tapestry.set_slot("canvas.mood", clean_mood)
-        elastic.broadcast(
-            topic="canvas.mood",
-            source="canvas_weft",
-            summary=f"Mood changed to {clean_mood}",
-            urgency=EventUrgency.AMBIENT,
-            data={"mood": clean_mood},
-            retained_slot="canvas.mood",
-            retained_value=clean_mood,
-        )
-        canvas_ctl.call_ipc("setMood", clean_mood)
-
-    @weft(pattern=r"<(?:gaze|on_stream_gaze):\s*(-?\d+(?:\.\d+)?)\s*,\s*(-?\d+(?:\.\d+)?)\s*>")
-    def on_stream_gaze(self, x: float, y: float) -> None:
-        """Emit inline eye gaze offsets (where X is -16.0 to 16.0, Y is -12.0 to 12.0, e.g. <gaze:8.0,-5.0>)."""
-        canvas_ctl.call_ipc("setGaze", str(x), str(y))
 
     @strand(tier="interact")
     def canvas_launch(self) -> str:
@@ -235,10 +232,7 @@ class Canvas(Yarn):
 
     @strand(tier="interact")
     def canvas_set_mood(self, mood: str = "neutral") -> str:
-        """Set canvas mood for CLI/desktop automation scripts.
-
-        NOTE FOR VOICE AGENTS: Do NOT call this tool during live voice sessions. Emit inline '<mood:...>'
-        tags directly in spoken text instead.
+        """Set canvas mood.
 
         :param mood: Desired mood (e.g. 'neutral', 'happy', 'excited', 'thinking', 'focused', 'listening').
         """
@@ -249,10 +243,7 @@ class Canvas(Yarn):
 
     @strand(tier="interact")
     def canvas_set_expression(self, expression: str = "neutral") -> str:
-        """Set canvas fine-grained expression state for CLI/desktop automation scripts.
-
-        NOTE FOR VOICE AGENTS: Do NOT call this tool during live voice sessions. Emit inline '<mood:...>'
-        tags directly in spoken text instead.
+        """Set canvas fine-grained expression state.
 
         :param expression: Expression name (e.g. 'neutral', 'smile', 'frown', 'blink', 'wide_eyes').
         """
@@ -263,10 +254,7 @@ class Canvas(Yarn):
 
     @strand(tier="interact")
     def canvas_set_talking(self, talking: bool = True) -> str:
-        """Toggle canvas speaking/talking mouth animation for CLI/desktop automation scripts.
-
-        NOTE FOR VOICE AGENTS: NEVER call this tool during live voice sessions. The engine automatically
-        animates talking states.
+        """Toggle canvas speaking/talking mouth animation.
 
         :param talking: True to animate speaking mouth, False to stop.
         """
@@ -276,12 +264,9 @@ class Canvas(Yarn):
 
     @strand(tier="interact")
     def canvas_set_listening(self, listening: bool = True) -> str:
-        """Toggle canvas listening visual state for CLI/desktop automation scripts.
+        """Toggle canvas listening visual state.
 
-        NOTE FOR VOICE AGENTS: NEVER call this tool during live voice sessions. The engine automatically
-        synchronizes listening visual states.
-
-        :param listening: True when the agent or assistant is actively listening to audio.
+        :param listening: True when actively listening to audio.
         """
         self.set_slot("canvas.is_listening", listening)
         res = canvas_ctl.call_ipc("setListening", "true" if listening else "false")
@@ -289,10 +274,7 @@ class Canvas(Yarn):
 
     @strand(tier="interact")
     def canvas_set_gaze(self, x: float = 0.0, y: float = 0.0) -> str:
-        """Set manual canvas eye gaze offsets for CLI/desktop automation scripts.
-
-        NOTE FOR VOICE AGENTS: Do NOT call this tool during live voice sessions. Emit inline '<gaze:X,Y>'
-        tags directly in spoken text instead.
+        """Set manual canvas eye gaze offsets.
 
         :param x: Horizontal gaze offset (-14.0 to 14.0).
         :param y: Vertical gaze offset (-10.0 to 10.0).

@@ -3,10 +3,16 @@ name = "textile-yarn-journal"
 version = "1.0.0"
 description = "Systemd journald logs inspection and query tool"
 authors = [{ name = "textile" }]
-requires-python = ">=3.14"
+requires-python = ">=3.15"
 dependencies = []
 
 [tool.textile]
 tailor = "textile"
 layer = 50
 resources = []
+
+[tool.pyright]
+extraPaths = [
+    "../../../textile/textile-needle/src",
+    "../../../textile/textile-core/src",
+]

@@ -12,7 +12,7 @@ import urllib.error
 import urllib.parse
 import urllib.request
 
-from textile import Yarn, strand
+from needle import Yarn, strand
 
 MAX_WEBPAGE_BODY_CHARS = 12000
 MIN_FALLBACK_RESULTS = 2

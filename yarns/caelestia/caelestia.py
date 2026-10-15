@@ -6,7 +6,7 @@ Layer 100 (Compositor / DE).
 import shutil
 import subprocess
 
-from textile import Yarn, strand
+from needle import Yarn, strand
 
 
 class CaelestiaIPC:

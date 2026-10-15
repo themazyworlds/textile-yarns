@@ -10,8 +10,7 @@ import time
 import uuid
 from typing import Any
 
-from textile import EventUrgency, Yarn, elastic, strand
-
+from needle import EventUrgency, Yarn, strand
 logger = logging.getLogger(__name__)
 
 ACTIVE_TIMERS: dict[str, dict[str, Any]] = {}
@@ -36,7 +35,7 @@ def _get_active_timers_snapshot() -> list[dict[str, Any]]:
     return timers
 
 
-async def _timer_worker(timer_id: str, label: str, duration_seconds: float, end_time: float) -> None:
+async def _timer_worker(yarn: Yarn, timer_id: str, label: str, duration_seconds: float, end_time: float) -> None:
     with contextlib.suppress(asyncio.CancelledError):
         try:
             sleep_dur = max(0.0, end_time - time.time())
@@ -49,9 +48,8 @@ async def _timer_worker(timer_id: str, label: str, duration_seconds: float, end_
                 "duration_seconds": duration_seconds,
                 "expired_at": time.time(),
             }
-            elastic.broadcast(
+            yarn.publish_event(
                 topic="timer.expired",
-                source="timer",
                 summary=f"Timer '{label}' (ID: {timer_id}) finished ({duration_seconds}s).",
                 urgency=EventUrgency.ALERT,
                 data=payload,
@@ -90,7 +88,7 @@ class Timer(Yarn):
         start_time = time.time()
         end_time = start_time + dur
 
-        task = asyncio.create_task(_timer_worker(tid, clean_label, dur, end_time))
+        task = asyncio.create_task(_timer_worker(self, tid, clean_label, dur, end_time))
         ACTIVE_TIMERS[tid] = {
             "id": tid,
             "label": clean_label,
@@ -105,9 +103,8 @@ class Timer(Yarn):
         dur_str = f"{mins}m {secs}s" if mins > 0 else f"{secs}s"
 
         active_snap = _get_active_timers_snapshot()
-        elastic.broadcast(
+        self.publish_event(
             topic="timer.started",
-            source="timer",
             summary=f"Timer '{clean_label}' started for {dur_str} (ID: {tid}).",
             urgency=EventUrgency.NOTICE,
             data={"id": tid, "label": clean_label, "duration_seconds": dur, "end_time": end_time},
@@ -146,9 +143,8 @@ class Timer(Yarn):
             task.cancel()
 
         active_left = _get_active_timers_snapshot()
-        elastic.broadcast(
+        self.publish_event(
             topic="timer.cancelled",
-            source="timer",
             summary=f"Timer '{info['label']}' (ID: {found_id}) cancelled.",
             urgency=EventUrgency.NOTICE,
             data={"id": found_id, "label": info["label"]},

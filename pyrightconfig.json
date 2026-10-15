@@ -1,0 +1,6 @@
+{
+  "extraPaths": [
+    "../textile-needle/src",
+    "../textile-core/src"
+  ]
+}

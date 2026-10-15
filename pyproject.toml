@@ -1,0 +1,12 @@
+[project]
+name = "textile-yarns"
+version = "0.1.0"
+description = "Textile sovereign desktop capability plugins collection"
+requires-python = ">=3.15"
+dependencies = []
+
+[tool.pyright]
+extraPaths = [
+    "../textile-needle/src",
+    "../textile-core/src",
+]

@@ -18,7 +18,7 @@ psutil: Any = None
 with contextlib.suppress(ImportError):
     import psutil
 
-from textile import Yarn, strand
+from needle import Yarn, strand
 
 
 class SensorsAPI:

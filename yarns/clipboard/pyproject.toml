@@ -3,7 +3,7 @@ name = "textile-yarn-clipboard"
 version = "1.0.0"
 description = "Clipboard read and write integration via wl-clipboard and xclip"
 authors = [{ name = "textile" }]
-requires-python = ">=3.14"
+requires-python = ">=3.15"
 dependencies = [
     "pyxclip",
 ]
@@ -12,3 +12,12 @@ dependencies = [
 tailor = "textile"
 layer = 50
 resources = ["display:wayland", "display:x11"]
+
+[tool.pyright]
+extraPaths = [
+    "../../../textile/textile-needle/src",
+    "../../../textile/textile-core/src",
+    ".venv/lib/python3.14/site-packages",
+]
+venvPath = "."
+venv = ".venv"

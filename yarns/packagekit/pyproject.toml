@@ -3,7 +3,7 @@ name = "textile-yarn-packagekit"
 version = "1.0.0"
 description = "Linux PackageKit D-Bus package installation and update query"
 authors = [{ name = "textile" }]
-requires-python = ">=3.14"
+requires-python = ">=3.15"
 dependencies = [
     "dbus-fast>=2.20.0",
 ]
@@ -12,3 +12,9 @@ dependencies = [
 tailor = "textile"
 layer = 10
 resources = ["dbus:system"]
+
+[tool.pyright]
+extraPaths = [
+    "../../../textile/textile-needle/src",
+    "../../../textile/textile-core/src",
+]
