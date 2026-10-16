@@ -10,7 +10,7 @@ import time
 import uuid
 from typing import Any
 
-from needle import EventUrgency, Yarn, strand
+from needle import Yarn, strand
 logger = logging.getLogger(__name__)
 
 ACTIVE_TIMERS: dict[str, dict[str, Any]] = {}
@@ -51,7 +51,7 @@ async def _timer_worker(yarn: Yarn, timer_id: str, label: str, duration_seconds:
             yarn.publish_event(
                 topic="timer.expired",
                 summary=f"Timer '{label}' (ID: {timer_id}) finished ({duration_seconds}s).",
-                urgency=EventUrgency.ALERT,
+                urgency="alert",
                 data=payload,
                 retained_slot="timers.active",
                 retained_value=active_left,
@@ -106,7 +106,7 @@ class Timer(Yarn):
         self.publish_event(
             topic="timer.started",
             summary=f"Timer '{clean_label}' started for {dur_str} (ID: {tid}).",
-            urgency=EventUrgency.NOTICE,
+            urgency="notice",
             data={"id": tid, "label": clean_label, "duration_seconds": dur, "end_time": end_time},
             retained_slot="timers.active",
             retained_value=active_snap,
@@ -146,7 +146,7 @@ class Timer(Yarn):
         self.publish_event(
             topic="timer.cancelled",
             summary=f"Timer '{info['label']}' (ID: {found_id}) cancelled.",
-            urgency=EventUrgency.NOTICE,
+            urgency="notice",
             data={"id": found_id, "label": info["label"]},
             retained_slot="timers.active",
             retained_value=active_left,
