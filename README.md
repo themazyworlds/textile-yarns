@@ -50,7 +50,7 @@ textile yarn paths
 
 ## Creating a New Capability Yarn
 
-Each yarn is a self-contained directory containing a standard `pyproject.toml` and an entry point Python class inheriting from `textile.Yarn`:
+Each yarn is a self-contained directory containing a standard `pyproject.toml` and an entry point Python class inheriting from `needle.Yarn`:
 
 ### 1. `pyproject.toml`
 ```toml
@@ -59,14 +59,15 @@ name = "textile-yarn-media_control"
 version = "1.0.0"
 description = "Media player control integration"
 authors = [{ name = "community" }]
-requires-python = ">=3.14"
+requires-python = ">=3.15"
 dependencies = [
+    "needle>=0.1.0",
     "mpris2>=1.0.2",
 ]
 
 [tool.textile]
 tailor = "community"
-layer = 50                       # 0 (Core), 10 (POSIX), 50 (Protocol), 100 (Compositor), 150 (Session), 1000 (User)
+layer = 50                       # 0 (Core), 50 (Protocol/Default), 100 (Compositor), 150 (Session), 1000 (User)
 resources = ["bin:playerctl", "socket:/run/user/1000/bus"]
 
 [tool.textile.settings.default_player]
@@ -78,7 +79,7 @@ choices = ["spotify", "vlc", "firefox", "chromium"]
 
 ### 2. `media_control.py`
 ```python
-from textile import Yarn, strand
+from needle import Yarn, strand
 
 
 class MediaControlYarn(Yarn):
