@@ -35,7 +35,7 @@ class ProcessControl(Yarn):
             "status": "running",
         }
 
-    @strand(capability="desktop.app_launcher", tier="interact")
+    @strand.interact(capability="desktop.app_launcher")
     def launch_app(self, command: str = "", is_tui: bool = False, app: str = "") -> str:
         """Launch a desktop application or background command.
 
@@ -61,7 +61,7 @@ class ProcessControl(Yarn):
         except (OSError, ValueError, subprocess.SubprocessError) as e:
             return f"Error launching application: {e}"
 
-    @strand(tier="observe")
+    @strand.observe
     def process_list(self, filter_query: str | None = None) -> list[dict[str, Any]]:
         """List running system processes with PID, CPU/memory usage, user, and command line.
 
@@ -87,7 +87,7 @@ class ProcessControl(Yarn):
         except (OSError, ValueError, TypeError) as e:
             return [{"error": f"Error scanning /proc: {e}"}]
 
-    @strand(tier="mutate")
+    @strand.mutate
     def process_kill(self, pid: int, signal: str = "SIGTERM") -> str:
         """Send a POSIX signal to terminate or signal a process by PID.
 
@@ -111,7 +111,7 @@ class ProcessControl(Yarn):
         except (OSError, ValueError, TypeError) as e:
             return f"Error sending signal: {e}"
 
-    @strand(tier="observe")
+    @strand.observe
     def process_list_bg_jobs(self) -> dict[str, Any]:
         """List background jobs spawned and tracked by Textile."""
         now = time.time()
@@ -129,7 +129,7 @@ class ProcessControl(Yarn):
             BACKGROUND_JOBS.pop(p, None)
         return {"active_bg_jobs_count": len(active_jobs), "jobs": active_jobs}
 
-    @strand(tier="observe")
+    @strand.observe
     def process_get_loadavg(self) -> dict[str, Any]:
         """Get CPU 1, 5, and 15-minute load averages and CPU core counts."""
         try:
@@ -145,7 +145,7 @@ class ProcessControl(Yarn):
         except (OSError, AttributeError) as e:
             return {"error": f"Error reading load average: {e}"}
 
-    @strand(tier="observe")
+    @strand.observe
     def process_get_priority(self, pid: int) -> str:
         """Get nice priority level of a running process by PID.
 
@@ -158,7 +158,7 @@ class ProcessControl(Yarn):
         except (OSError, ValueError, TypeError) as e:
             return f"Error getting priority: {e}"
 
-    @strand(tier="mutate")
+    @strand.mutate
     def process_set_priority(self, pid: int, priority: int = 0) -> str:
         """Set nice priority level (-20 to 19) of a process by PID.
 

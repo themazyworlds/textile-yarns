@@ -152,7 +152,7 @@ class WebResearch(Yarn):
     def is_available(self) -> bool:
         return True
 
-    @strand(tier="observe")
+    @strand.observe
     def search_web(self, query: str) -> str:
         """Search the internet for documentation, code examples, API references, or solutions.
 
@@ -160,7 +160,7 @@ class WebResearch(Yarn):
         """
         return search_web(query)
 
-    @strand(tier="observe")
+    @strand.observe
     def fetch_webpage(self, url: str) -> str:
         """Fetch and read the text content of a web page URL.
 

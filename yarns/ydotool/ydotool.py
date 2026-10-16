@@ -85,7 +85,7 @@ class Ydotool(Yarn):
                 return False
         return True
 
-    @strand(tier="interact")
+    @strand.interact
     def type_text(self, text: str, press_enter: bool = True, delay_ms: int = 12) -> str:
         """Type text, commands, or passwords directly into the active focused window.
 
@@ -142,7 +142,7 @@ class Ydotool(Yarn):
 
         return "Error: Virtual keyboard daemon (ydotool) could not connect."
 
-    @strand(tier="interact")
+    @strand.interact
     def press_key(self, key: str, modifiers: str | None = None) -> str:
         """Press a specific keyboard key or hotkey combination.
 
@@ -190,7 +190,7 @@ class Ydotool(Yarn):
 
         return "Error: ydotool is not available."
 
-    @strand(tier="interact")
+    @strand.interact
     def paste_text(
         self,
         text: str | None = None,

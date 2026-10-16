@@ -68,7 +68,7 @@ class Timer(Yarn):
     def is_available(self) -> bool:
         return True
 
-    @strand(tier="interact")
+    @strand.interact
     async def set_timer(self, duration_seconds: float, label: str = "Timer", timer_id: str | None = None) -> str:
         """Set a countdown timer that publishes an alert when it expires.
 
@@ -113,12 +113,12 @@ class Timer(Yarn):
         )
         return f"Timer '{clean_label}' started for {dur_str} (ID: {tid})."
 
-    @strand(tier="observe")
+    @strand.observe
     def list_timers(self) -> list[dict[str, Any]]:
         """List all currently active countdown timers with remaining time."""
         return _get_active_timers_snapshot()
 
-    @strand(tier="mutate")
+    @strand.mutate
     def cancel_timer(self, timer_id: str) -> str:
         """Cancel a running countdown timer by its timer ID or label.
 

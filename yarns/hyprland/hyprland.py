@@ -672,7 +672,7 @@ class Hyprland(Yarn):
             return ws, win_query
         return target or "1", None
 
-    @strand(tier="interact")
+    @strand.interact
     def hyprland_focus_window(self, target: str) -> str:
         """Focus a Hyprland window by title, class, address, or search query.
 
@@ -680,7 +680,7 @@ class Hyprland(Yarn):
         """
         return hyprland_ipc.focus_window(target)
 
-    @strand(tier="interact")
+    @strand.interact
     def hyprland_focus_workspace(self, workspace: str = "1") -> str:
         """Switch active Hyprland workspace.
 
@@ -688,7 +688,7 @@ class Hyprland(Yarn):
         """
         return hyprland_ipc.focus_workspace(workspace)
 
-    @strand(tier="interact")
+    @strand.interact
     def hyprland_move_window_to_workspace(
         self,
         workspace: str,
@@ -704,7 +704,7 @@ class Hyprland(Yarn):
         ws, win_q = self._parse_workspace_target(f"{target} {workspace}".strip() if target else str(workspace))
         return hyprland_ipc.move_to_workspace(ws, win_q, silent=silent)
 
-    @strand(tier="interact")
+    @strand.interact
     def hyprland_close_window(self, target: str | None = None) -> str:
         """Close a window by query, address, or active window.
 
@@ -712,7 +712,7 @@ class Hyprland(Yarn):
         """
         return hyprland_ipc.close_window(target=target)
 
-    @strand(tier="interact")
+    @strand.interact
     def hyprland_toggle_float(self, target: str | None = None) -> str:
         """Toggle floating state for active or specified window.
 
@@ -720,7 +720,7 @@ class Hyprland(Yarn):
         """
         return hyprland_ipc.window_action("float", target=target)
 
-    @strand(tier="interact")
+    @strand.interact
     def hyprland_toggle_fullscreen(self, target: str | None = None) -> str:
         """Toggle fullscreen mode for active or specified window.
 
@@ -728,7 +728,7 @@ class Hyprland(Yarn):
         """
         return hyprland_ipc.window_action("fullscreen", target=target)
 
-    @strand(tier="interact")
+    @strand.interact
     def hyprland_pin_window(self, target: str | None = None) -> str:
         """Pin window to show across all workspaces.
 
@@ -736,7 +736,7 @@ class Hyprland(Yarn):
         """
         return hyprland_ipc.window_action("pin", target=target)
 
-    @strand(tier="interact")
+    @strand.interact
     def hyprland_center_window(self, target: str | None = None) -> str:
         """Center floating window on screen.
 
@@ -744,7 +744,7 @@ class Hyprland(Yarn):
         """
         return hyprland_ipc.window_action("center", target=target)
 
-    @strand(tier="interact")
+    @strand.interact
     def hyprland_move_window(
         self,
         delta_x: int = 0,
@@ -766,7 +766,7 @@ class Hyprland(Yarn):
             target=target,
         )
 
-    @strand(tier="interact")
+    @strand.interact
     def hyprland_resize_window(
         self,
         delta_x: int,
@@ -786,7 +786,7 @@ class Hyprland(Yarn):
             target=target,
         )
 
-    @strand(tier="interact")
+    @strand.interact
     def hyprland_focus_direction(
         self,
         direction: Literal["left", "right", "up", "down"] = "left",
@@ -797,7 +797,7 @@ class Hyprland(Yarn):
         """
         return hyprland_ipc.focus_direction(direction)
 
-    @strand(tier="interact")
+    @strand.interact
     def hyprland_set_night_light(self, temperature: int = 4000) -> dict[str, Any]:
         """Set color temperature for night light / Hyprsunset.
 
@@ -805,12 +805,12 @@ class Hyprland(Yarn):
         """
         return hyprland_ipc.set_night_light(temperature=int(temperature))
 
-    @strand(tier="observe")
+    @strand.observe
     def hyprland_get_night_light(self) -> dict[str, Any]:
         """Get current night light color temperature and process status."""
         return hyprland_ipc.get_night_light_status()
 
-    @strand(tier="mutate")
+    @strand.mutate
     def hyprland_set_monitor(
         self,
         output: str,
@@ -832,27 +832,27 @@ class Hyprland(Yarn):
             scale=float(scale),
         )
 
-    @strand(tier="observe")
+    @strand.observe
     def hyprland_get_active_workspace(self) -> dict[str, Any]:
         """Get details of currently active workspace."""
         return hyprland_ipc.get_active_workspace()
 
-    @strand(tier="observe")
+    @strand.observe
     def hyprland_get_active_window(self) -> dict[str, Any]:
         """Get details of currently focused window."""
         return hyprland_ipc.get_active_window()
 
-    @strand(tier="observe")
+    @strand.observe
     def hyprland_get_self_window(self) -> dict[str, Any] | None:
         """Get window details for the calling Textile / CLI process."""
         return hyprland_ipc.get_self_window()
 
-    @strand(tier="observe")
+    @strand.observe
     def hyprland_get_workspaces(self) -> list[dict[str, Any]]:
         """List all active Hyprland workspaces."""
         return hyprland_ipc.get_workspaces()
 
-    @strand(tier="observe")
+    @strand.observe
     def hyprland_get_window(self, target: str) -> dict[str, Any]:
         """Get window details by title, class, address, or query.
 
@@ -860,22 +860,22 @@ class Hyprland(Yarn):
         """
         return hyprland_ipc.resolve_window(target) or {"error": f"Window '{target}' not found"}
 
-    @strand(tier="observe")
+    @strand.observe
     def hyprland_get_windows(self) -> list[dict[str, Any]]:
         """List all open windows / clients in Hyprland."""
         return hyprland_ipc.get_clients()
 
-    @strand(tier="observe")
+    @strand.observe
     def hyprland_get_monitors(self) -> list[dict[str, Any]]:
         """List connected monitors and layout geometry."""
         return hyprland_ipc.get_monitors()
 
-    @strand(tier="privileged")
+    @strand.privileged
     def hyprland_exit_session(self) -> str:
         """Exit Hyprland compositor session (logout)."""
         return hyprland_ipc.exit_session()
 
-    @strand(capability="desktop.app_launcher", tier="privileged")
+    @strand.privileged(capability="desktop.app_launcher")
     def hyprland_launch_app(self, command: str, is_tui: bool = False) -> str:
         """Launch application or shell command via Hyprland exec dispatcher.
 

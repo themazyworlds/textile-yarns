@@ -225,12 +225,12 @@ class Sensors(Yarn):
     def is_available(self) -> bool:
         return sensors_api.is_available()
 
-    @strand(tier="observe")
+    @strand.observe
     def sensors_get_telemetry(self) -> dict[str, Any]:
         """Retrieve hardware telemetry (temperatures, fans, voltages, power) via lm_sensors / sysfs."""
         return sensors_api.get_sensor_data()
 
-    @strand(tier="observe")
+    @strand.observe
     def sensors_get_cpu_freqs(self) -> list[dict[str, Any]]:
         """Retrieve live CPU core frequencies (MHz) and scaling governors across CPU cores."""
         return sensors_api.get_cpu_frequencies()

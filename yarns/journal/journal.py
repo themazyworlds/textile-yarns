@@ -217,7 +217,7 @@ class Journal(Yarn):
     def is_available(self) -> bool:
         return journal_api.is_available()
 
-    @strand(tier="observe")
+    @strand.observe
     def journal_query(
         self,
         query: JournalQueryParams | None = None,
@@ -226,7 +226,7 @@ class Journal(Yarn):
         """Query systemd journal logs with structured filtering by unit, priority, time range, or grep."""
         return journal_api.query_logs(query=query, **kwargs)
 
-    @strand(tier="observe")
+    @strand.observe
     def journal_get_errors(self, since: str = "-1h", lines: int = 25) -> list[dict[str, Any]]:
         """Fast diagnostic tool to retrieve recent system and user error logs.
 
@@ -235,7 +235,7 @@ class Journal(Yarn):
         """
         return journal_api.get_errors(since=since, lines=lines)
 
-    @strand(tier="observe")
+    @strand.observe
     def journal_get_kernel(self, since: str = "-1h", lines: int = 25) -> list[dict[str, Any]]:
         """Retrieve recent kernel hardware, driver, ACPI, GPU, and dmesg log entries.
 

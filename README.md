@@ -82,7 +82,7 @@ from textile import Yarn, strand
 
 
 class MediaControlYarn(Yarn):
-    @strand(tier="interact")
+    @strand.interact
     async def media_play_pause(self, target: str | None = None) -> str:
         """Play or pause media playback."""
         player = target or self.settings.default_player

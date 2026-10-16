@@ -41,7 +41,7 @@ class UWSM(Yarn):
         except (OSError, subprocess.SubprocessError) as e:
             return f"Error running UWSM action: {e}"
 
-    @strand(capability="desktop.app_launcher", tier="interact")
+    @strand.interact(capability="desktop.app_launcher")
     def launch_app(
         self,
         command: str = "",
@@ -104,7 +104,7 @@ class UWSM(Yarn):
         except (OSError, subprocess.SubprocessError) as e:
             return f"Error launching app via UWSM: {e}"
 
-    @strand(tier="observe")
+    @strand.observe
     def uwsm_status(self, unit: str | None = None) -> str:
         """Check UWSM Wayland session status and systemd user unit hierarchy.
 
@@ -155,7 +155,7 @@ class UWSM(Yarn):
         except (OSError, subprocess.SubprocessError) as e:
             return f"Error checking UWSM status: {e}"
 
-    @strand(tier="observe")
+    @strand.observe
     def uwsm_check(self, target: str | None = None) -> str:
         """Check UWSM environment compatibility and compositor readiness.
 
@@ -166,7 +166,7 @@ class UWSM(Yarn):
             checker = "is-active"
         return self._run_uwsm("check", checker)
 
-    @strand(tier="privileged")
+    @strand.privileged
     def uwsm_stop(self, unit: str | None = None) -> str:
         """Stop active UWSM Wayland desktop session or a specific systemd user unit.
 
@@ -191,7 +191,7 @@ class UWSM(Yarn):
                 return f"Error stopping unit '{target_unit}': {e}"
         return self._run_uwsm("stop")
 
-    @strand(tier="privileged")
+    @strand.privileged
     def uwsm_finalize(self, target: str | None = None) -> str:
         """Finalize UWSM environment variables and session cleanup.
 

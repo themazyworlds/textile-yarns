@@ -252,7 +252,7 @@ class DBus(Yarn):
     def is_available(self) -> bool:
         return bool(os.environ.get("DBUS_SESSION_BUS_ADDRESS") or os.path.exists("/run/dbus/system_bus_socket"))
 
-    @strand(tier="privileged")
+    @strand.privileged
     def dbus_call(
         self,
         destination: str,
@@ -299,7 +299,7 @@ class DBus(Yarn):
         except (OSError, RuntimeError, ValueError, TypeError, AttributeError, KeyError) as e:
             return f"Error executing D-Bus call: {e}"
 
-    @strand(tier="observe")
+    @strand.observe
     def dbus_get_property(
         self,
         destination: str,
@@ -331,7 +331,7 @@ class DBus(Yarn):
         except (OSError, RuntimeError, ValueError, TypeError, AttributeError, KeyError) as e:
             return f"Error reading D-Bus property: {e}"
 
-    @strand(tier="mutate")
+    @strand.mutate
     def dbus_set_property(
         self,
         destination: str,
@@ -383,7 +383,7 @@ class DBus(Yarn):
         except (OSError, RuntimeError, ValueError, TypeError, AttributeError, KeyError) as e:
             return f"Error setting D-Bus property: {e}"
 
-    @strand(tier="observe")
+    @strand.observe
     def dbus_introspect(
         self,
         destination: str,

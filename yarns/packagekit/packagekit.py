@@ -606,7 +606,7 @@ class PackageKit(Yarn):
     def is_available(self) -> bool:
         return packagekit_ctl.is_available()
 
-    @strand(tier="observe")
+    @strand.observe
     def packagekit_search(self, query: str = "", limit: int = 25) -> list[dict[str, Any]]:
         """Search packages by name or keyword across distribution repositories.
 
@@ -615,7 +615,7 @@ class PackageKit(Yarn):
         """
         return packagekit_ctl.search(query=query, limit=limit)
 
-    @strand(tier="privileged", no_timeout=True)
+    @strand.privileged(no_timeout=True)
     def packagekit_install(self, packages: str) -> str:
         """Install one or more packages uninterrupted without worker timeout.
 
@@ -624,7 +624,7 @@ class PackageKit(Yarn):
         pkgs_raw = [p.strip() for p in packages.replace(",", " ").split() if p.strip()]
         return packagekit_ctl.install(packages=pkgs_raw)
 
-    @strand(tier="privileged", no_timeout=True)
+    @strand.privileged(no_timeout=True)
     def packagekit_remove(self, packages: str, autoremove: bool = False) -> str:
         """Remove one or more packages uninterrupted without worker timeout.
 
@@ -634,7 +634,7 @@ class PackageKit(Yarn):
         pkgs_raw = [p.strip() for p in packages.replace(",", " ").split() if p.strip()]
         return packagekit_ctl.remove(packages=pkgs_raw, autoremove=autoremove)
 
-    @strand(tier="observe")
+    @strand.observe
     def packagekit_get_details(self, package: str) -> dict[str, Any]:
         """Get detailed metadata for a package.
 
@@ -642,12 +642,12 @@ class PackageKit(Yarn):
         """
         return packagekit_ctl.get_details(package=package)
 
-    @strand(tier="observe")
+    @strand.observe
     def packagekit_check_updates(self) -> list[dict[str, Any]]:
         """Check for pending system updates."""
         return packagekit_ctl.check_updates()
 
-    @strand(tier="observe")
+    @strand.observe
     def packagekit_what_provides(self, file_path: str) -> str:
         """Find package providing a specific file.
 
@@ -655,7 +655,7 @@ class PackageKit(Yarn):
         """
         return packagekit_ctl.what_provides(file_path=file_path)
 
-    @strand(tier="privileged", no_timeout=True)
+    @strand.privileged(no_timeout=True)
     def packagekit_refresh_cache(self, force: bool = False) -> str:
         """Refresh package repository cache uninterrupted without worker timeout.
 
@@ -663,7 +663,7 @@ class PackageKit(Yarn):
         """
         return packagekit_ctl.refresh_cache(force=force)
 
-    @strand(tier="observe")
+    @strand.observe
     def packagekit_get_progress(self) -> dict[str, Any]:
         """Get real-time percentage and status of active PackageKit installation or removal task."""
         return packagekit_ctl.get_progress()
