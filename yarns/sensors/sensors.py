@@ -5,20 +5,21 @@ Layer 10 (Core POSIX).
 """
 
 import contextlib
-import ctypes
-import ctypes.util
-import json
 import os
-import shutil
-import subprocess
 from pathlib import Path
 from typing import Any
-
-psutil: Any = None
-with contextlib.suppress(ImportError):
-    import psutil
+lazy import ctypes
+lazy import ctypes.util
+lazy import json
+lazy import shutil
+lazy import subprocess
 
 from needle import Yarn, strand
+
+try:
+    import psutil
+except ImportError:
+    psutil = None
 
 
 class SensorsAPI:
@@ -26,9 +27,12 @@ class SensorsAPI:
 
     def __init__(self):
         self._libsensors = None
-        self._init_libsensors()
+        self._libsensors_initialized = False
 
     def _init_libsensors(self):
+        if self._libsensors_initialized:
+            return
+        self._libsensors_initialized = True
         lib_path = ctypes.util.find_library("sensors") if hasattr(ctypes, "util") else None
         if not lib_path:
             for candidate in ("libsensors.so.5", "libsensors.so.4", "libsensors.so"):
@@ -44,6 +48,7 @@ class SensorsAPI:
                 self._libsensors.sensors_init(None)
 
     def is_available(self) -> bool:
+        self._init_libsensors()
         if self._libsensors or shutil.which("sensors"):
             return True
         return os.path.exists("/sys/class/hwmon") or os.path.exists("/sys/class/thermal")
